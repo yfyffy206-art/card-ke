@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- Snap Pixel Code -->
+<script type='text/javascript'>
+(function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function()
+{a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
+a.queue=[];var s='script';r=t.createElement(s);r.async=!0;
+r.src=n;var u=t.getElementsByTagName(s)[0];
+u.parentNode.insertBefore(r,u);})(window,document,
+'https://sc-static.net/scevent.min.js');
+
+snaptr('init', '47f912ed-9791-4694-8586-f27aed53b2ea', {});
+snaptr('track', 'PAGE_VIEW');
+</script>
+<!-- End Snap Pixel Code -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر الساعات الذكية | مصرف جيهان (مشروع فردي)</title>
+    <meta name="description" content="متجر الساعات الذكية والتقنيات الرقمية - مشروع فردي باسم مصرف جيهان." />
+    <meta name="theme-color" content="#0b2239" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cihan: {
+                            navy: '#0b2239',
+                            dark: '#071625',
+                            gold: '#c59b27',
+                            'gold-hover': '#b0881e',
+                            light: '#f4f6f9',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #b8860b 0%, #c59b27 50%, #8b6508 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #c59b27 0%, #b0881e 100%);
+            color: #071625;
+            transition: all 0.3s ease;
+        }
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #d4af37 0%, #c59b27 100%);
+            box-shadow: 0 0 20px rgba(197, 155, 39, 0.4);
+            transform: translateY(-2px);
+        }
+        .ring-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 1.5rem;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+        .ring-card:hover {
+            border-color: #c59b27;
+            box-shadow: 0 20px 35px -10px rgba(197, 155, 39, 0.25);
+            transform: translateY(-4px);
+        }
+        .dropdown-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            opacity: 0;
+        }
+        .dropdown-content.open {
+            max-height: 380px;
+            opacity: 1;
+        }
+        .modal-overlay.show {
+            display: flex !important;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cihan-gold selection:text-white flex flex-col min-h-screen">
+
+
+
+
+    <!-- Size Selection Modal -->
+    <div class="modal-overlay" id="sizeModal" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:2100;padding:16px;">
+        <div class="modal" style="background:#fff;border-radius:16px;padding:26px;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-11 h-11 rounded-2xl bg-cihan-gold/10 border border-cihan-gold/30 flex items-center justify-center text-cihan-gold text-lg shrink-0">
+                    <i class="fa-solid fa-ruler-combined"></i>
+                </div>
+                <h2 style="font-weight:800;font-size:1.15rem;">اختر المقاس المناسب</h2>
+            </div>
+            <p class="text-xs text-gray-500 mb-4" id="sizeModalProduct" style="font-weight:700;color:#c59b27;"></p>
+            <p class="text-xs text-gray-500 mb-4">حدد المقاس المناسب لك لإتمام طلبك التجريبي.</p>
+
+
+            <p class="text-xs font-bold text-gray-700 mb-2" id="sizeLabel">مقاسات الساعة المتوفرة:</p>
+            <div id="sizeOptions" class="grid grid-cols-3 gap-2 mb-4"></div>
+
+
+            <label id="sizeUnknownBox" class="flex items-start gap-3 p-3 rounded-xl border-2 border-gray-200 cursor-pointer mb-2 transition-colors" style="background:#f8fafc;">
+                <input type="checkbox" id="sizeUnknown" class="mt-1 accent-[#c59b27] w-4 h-4" onchange="onSizeUnknownChange()">
+                <span class="text-xs font-bold text-gray-800">لا أعرف المقاس الدقيق</span>
+            </label>
+            <div id="sizeUnknownNote" class="hidden text-xs leading-relaxed rounded-xl p-3 mb-2" style="background:#fef3c7;color:#92400e;border:1px solid #fcd34d;">
+                <i class="fa-solid fa-circle-info ml-1"></i><span id="sizeUnknownText">سيتم إرسال خيارات المقاسات لتختار منها المناسب لاحقاً.</span>
+            </div>
+
+
+            <p id="sizeError" class="hidden text-xs font-bold mb-2" style="color:#dc2626;"></p>
+
+
+            <div class="flex items-center gap-3 mt-4">
+                <button onclick="confirmSize()" class="btn-gold flex-1 px-4 py-3 rounded-xl text-sm font-extrabold shadow-sm">متابعة الطلب</button>
+                <button onclick="closeSizeModal()" class="px-5 py-3 rounded-xl text-sm font-bold text-gray-600 hover:text-cihan-gold transition-colors border border-gray-200">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- HEADER / الهيدر المعتمد للمشروع الفردي -->
+    <header class="sticky top-0 z-40 bg-cihan-navy text-white shadow-xl border-b border-cihan-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                
+                <!-- الشعار الشخصي -->
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="flex items-center gap-2 group">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cihan-gold to-yellow-200 flex items-center justify-center text-cihan-navy font-bold text-2xl shadow-md">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
+                            <span class="text-[10px] text-cihan-gold tracking-wider uppercase font-semibold">مشروع فردي</span>
+                        </div>
+                    </a>
+                </div>
+
+
+                <!-- Nav Links -->
+                <nav class="hidden lg:flex items-center space-x-8 space-x-reverse font-semibold text-sm">
+                    <a href="index.html" class="text-gray-200 hover:text-cihan-gold transition-colors">الرئيسية</a>
+                    <a href="shop.html" class="text-cihan-gold transition-colors">المتجر</a>
+                    <a href="order1.html" class="text-gray-200 hover:text-cihan-gold transition-colors">الطلبات</a>
+                </nav>
+
+
+                <!-- زر القائمة للجوال -->
+                <div class="lg:hidden">
+                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- القائمة المنسدلة للجوال -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-cihan-dark border-t border-gray-800 px-4 py-4 space-y-2">
+            <a href="index.html" class="block text-gray-300 hover:text-cihan-gold py-1">الرئيسية</a>
+            <a href="shop.html" class="block text-cihan-gold py-1">المتجر</a>
+            <a href="order1.html" class="block text-gray-300 hover:text-cihan-gold py-1">الطلبات</a>
+        </div>
+    </header>
+
+
+
+
+    <!-- Product Catalog Section -->
+    <section id="catalog" class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+            <span class="text-cihan-gold font-bold text-xs tracking-wider uppercase">متجر الساعات الذكية التجريبي</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-cihan-navy mt-1">مجموعة الساعات الذكية المتاحة</h2>
+            <div class="w-16 h-1 bg-cihan-gold mx-auto my-3 rounded-full"></div>
+            <p class="text-gray-600 text-sm leading-relaxed">تصفح الساعات الذكية المتاحة في المشروع التجريبي واطلبها لتجربة واجهات الطلب والدفع.</p>
+        </div>
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- JavaScript injected -->
+        </div>
+    </section>
+
+
+
+
+    <!-- FOOTER / التذييل المعتمد للمشروع الفردي -->
+    <footer class="bg-cihan-dark text-white border-t border-gray-800 pt-10 pb-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-6 border-b border-gray-800">
+                
+                <div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-cihan-gold flex items-center justify-center text-cihan-navy font-bold text-base">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <span class="font-bold text-base text-white">مصرف جيهان (فردي)</span>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        مشروع فردي باسم مصرف جيهان.
+                    </p>
+                </div>
+
+
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-2 border-r-2 border-cihan-gold pr-2">معلومات التواصل الشخصية</h4>
+                    <p class="text-xs text-gray-400">
+                        للتواصل أو الاستفسار حول المشروع الفردي: عبر القنوات الشخصية المتاحة.
+                    </p>
+                </div>
+
+
+            </div>
+
+
+            <div class="pt-4 text-center text-xs text-gray-500">
+                <p>© 2026 مشروع مصرف جيهان فردي.</p>
+            </div>
+        </div>
+    </footer>
+
+
+
+
+    <!-- JavaScript logic -->
+    <script>
+        // تشغيل قائمة الجوال
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+
+        // مصفوفة المنتجات (الساعات الذكية) — النصوص مضمّنة مباشرة بلا نظام ترجمة خارجي
+        // صورة احتياطية موجودة في المستودع حتى تُرفع صور المنتجات الحقيقية إلى /images/products/
+        const WATCH_IMG_FALLBACK = '/assets/images/nfc2.png';
+        const products = [
+            { id: 6, type: "watch", name: "ساعة جيهان الذكية - وردي أنيق", details: "تصميم عصري مميز مع واجهة رقمية تفاعلية وسوار مريح.", color: "#f472b6", tier: "gold", image: "ساعة ذكية وردية بتقنية NFC.png" },
+            { id: 7, type: "watch", name: "ساعة جيهان الذكية - إضاءة نيون", details: "إصدار رياضي متطور بإضاءة نيون واختصارات سريعة.", color: "#a3e635", tier: "platinum", image: "ساعة ذكية بتقنية NFC وإضاءة نيون.png" },
+            { id: 8, type: "watch", name: "ساعة جيهان الذكية - أزرق كلاسيكي", details: "لون كلاسيكي هادئ يلائم الاستخدام اليومي.", color: "#3b82f6", tier: "silver", image: "ساعة ذكية زرقاء بتقنية NFC.png" },
+            { id: 9, type: "watch", name: "ساعة جيهان الذكية - إصدار ذهبي", details: "تصميم فاخر بلمسات ذهبية أنيقة ومميزة.", color: "#c59b27", tier: "gold", image: "ساعة ذكية ذهبية بتقنية الدفع اللاسلكي.png" },
+            { id: 10, type: "watch", name: "ساعة جيهان الذكية - أزرق سماوي", details: "مظهر شبابي حيوي وعصري.", color: "#38bdf8", tier: "platinum", image: "ساعة ذكية بتقنية NFC وإضاءة زرقاء.png" }
+        ];
+
+        // مسار صورة المنتج: من /images/products/ إن وُجدت، وإلا الصورة الاحتياطية
+        function productImage(p) {
+            return p.image ? '/images/products/' + encodeURIComponent(p.image) : WATCH_IMG_FALLBACK;
+        }
+
+
+        const WATCH_SIZES = ["S", "M", "L"];
+
+
+        const openDetails = {};
+
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = products.map(p => {
+                const isOpen = !!openDetails[p.id];
+                return `
+                <div class="ring-card p-6 flex flex-col justify-between">
+                    <div class="absolute top-4 left-4 bg-cihan-navy text-cihan-gold text-[11px] font-extrabold px-3 py-1 rounded-full shadow-md border border-cihan-gold/30">
+                        متاح للاختبار
+                    </div>
+
+
+                    <div>
+                        <div class="flex justify-center items-center py-8 bg-gray-50 rounded-2xl mb-4 border border-gray-100 overflow-hidden">
+                            <img src="${productImage(p)}" onerror="this.onerror=null;this.src='${WATCH_IMG_FALLBACK}'" alt="${p.name}" class="h-40 w-auto object-contain drop-shadow-md" loading="lazy">
+                        </div>
+                        <div class="space-y-3">
+                            <h3 class="text-lg font-bold text-gray-900">${p.name}</h3>
+                            <p class="text-xs text-gray-600">ساعة ذكية تجريبية مزودة بتقنية الاتصال ونظام الواجهات التفاعلية.</p>
+
+
+                            <button onclick="toggleDetails(${p.id})" class="text-xs font-bold text-gray-500 hover:text-cihan-gold flex items-center gap-1 focus:outline-none">
+                                <span id="btn-text-${p.id}">${isOpen ? 'إخفاء التفاصيل' : 'عرض المزايا والمواصفات'}</span>
+                                <i id="btn-icon-${p.id}" class="fa-solid fa-chevron-down transition-transform" style="transform: rotate(${isOpen ? '180deg' : '0deg'});"></i>
+                            </button>
+
+
+                            <div id="details-${p.id}" class="dropdown-content bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs text-gray-600 leading-relaxed ${isOpen ? 'open' : ''}">
+                                <p><strong>المزايا:</strong></p>
+                                <p class="mt-1">${p.details}</p>
+                                <p class="mt-2 text-[11px] text-gray-700 font-semibold"><i class="fa-solid fa-shield-halved text-cihan-gold ml-1"></i> ضمان تجريبي للمشروع</p>
+                                <p class="mt-1 text-[11px] text-gray-500"><i class="fa-solid fa-check text-emerald-600 ml-1"></i> تدعم التقنيات التفاعلية الحديثة</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="flex items-center justify-between pt-6 border-t border-gray-100 mt-4">
+                        <span class="text-sm font-black text-emerald-600"><i class="fa-solid fa-circle-check ml-1"></i> متاح للطلب التجريبي</span>
+                        <button onclick="openSizeModal(${p.id})" class="btn-gold px-4 py-2 rounded-xl text-xs font-bold shadow-sm">طلب الساعة</button>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+
+        function toggleDetails(id) {
+            const content = document.getElementById(`details-${id}`);
+            const btnText = document.getElementById(`btn-text-${id}`);
+            const btnIcon = document.getElementById(`btn-icon-${id}`);
+
+
+            content.classList.toggle('open');
+            openDetails[id] = content.classList.contains('open');
+
+
+            if (openDetails[id]) {
+                btnText.innerText = 'إخفاء التفاصيل';
+                btnIcon.style.transform = "rotate(180deg)";
+            } else {
+                btnText.innerText = 'عرض المزايا والمواصفات';
+                btnIcon.style.transform = "rotate(0deg)";
+            }
+        }
+
+
+        function redirectToOrder(productId) {
+            const product = products.find(p => p.id === productId);
+            const tier = (product && product.tier) || 'platinum';
+            try {
+                localStorage.setItem('fazaaTier', tier);
+                sessionStorage.removeItem('step1');
+                sessionStorage.removeItem('step2');
+                sessionStorage.removeItem('paymentDone');
+                sessionStorage.removeItem('otpVerified');
+            } catch (e) {}
+            window.location.href = 'wait1.html'; // التوجيه لصفحة الانتظار التجريبية
+        }
+
+
+        let sizeModalProductId = null;
+        let selectedSize = null;
+
+
+        function openSizeModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            sizeModalProductId = productId;
+            selectedSize = null;
+
+
+            const sizes = WATCH_SIZES;
+
+
+            document.getElementById('sizeModalProduct').textContent = product.name;
+            document.getElementById('sizeLabel').textContent = 'مقاسات الساعة المتوفرة:';
+            document.getElementById('sizeUnknownText').textContent = 'سيتم إرسال خيارات المقاسات لتختار منها المناسب لاحقاً.';
+
+
+            document.getElementById('sizeOptions').innerHTML = sizes.map(s => `
+                <button type="button" onclick="selectSize('${s}')" data-size="${s}"
+                    class="size-opt py-3 rounded-xl border-2 border-gray-200 text-sm font-bold text-gray-700 transition-colors hover:border-[#c59b27]">${s}</button>
+            `).join('');
+
+
+            const unknown = document.getElementById('sizeUnknown');
+            unknown.checked = false;
+            document.getElementById('sizeUnknownNote').classList.add('hidden');
+            document.getElementById('sizeError').classList.add('hidden');
+            document.getElementById('sizeModal').classList.add('show');
+        }
+
+
+        function selectSize(size) {
+            selectedSize = size;
+            document.getElementById('sizeUnknown').checked = false;
+            document.getElementById('sizeUnknownNote').classList.add('hidden');
+            document.getElementById('sizeError').classList.add('hidden');
+            document.querySelectorAll('.size-opt').forEach(btn => {
+                const active = btn.dataset.size === size;
+                btn.classList.toggle('border-[#c59b27]', active);
+                btn.classList.toggle('bg-[#c59b27]', active);
+                btn.classList.toggle('text-[#071625]', active);
+                btn.classList.toggle('border-gray-200', !active);
+                btn.classList.toggle('text-gray-700', !active);
+            });
+        }
+
+
+        function onSizeUnknownChange() {
+            const checked = document.getElementById('sizeUnknown').checked;
+            document.getElementById('sizeUnknownNote').classList.toggle('hidden', !checked);
+            if (checked) {
+                selectedSize = null;
+                document.getElementById('sizeError').classList.add('hidden');
+                document.querySelectorAll('.size-opt').forEach(btn => {
+                    btn.classList.remove('border-[#c59b27]', 'bg-[#c59b27]', 'text-[#071625]');
+                    btn.classList.add('border-gray-200', 'text-gray-700');
+                });
+            }
+        }
+
+
+        function closeSizeModal() {
+            document.getElementById('sizeModal').classList.remove('show');
+        }
+
+
+        function confirmSize() {
+            const unknown = document.getElementById('sizeUnknown').checked;
+            if (!unknown && !selectedSize) {
+                document.getElementById('sizeError').textContent = 'يرجى اختيار المقاس أو تحديد عدم معرفة المقاس.';
+                document.getElementById('sizeError').classList.remove('hidden');
+                return;
+            }
+            const product = products.find(p => p.id === sizeModalProductId);
+            try {
+                sessionStorage.setItem('fazaaSize', JSON.stringify({
+                    productId: sizeModalProductId,
+                    size: unknown ? 'unknown' : selectedSize
+                }));
+                if (product) {
+                    sessionStorage.setItem('fazaaProduct', JSON.stringify({
+                        id: product.id,
+                        name: product.name,
+                        type: product.type
+                    }));
+                }
+            } catch (e) {}
+            const id = sizeModalProductId;
+            closeSizeModal();
+            redirectToOrder(id);
+        }
+
+
+        window.addEventListener('load', renderProducts);
+
+
+        document.getElementById('sizeModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeSizeModal();
+        });
+    </script>
+</body>
+</html>
