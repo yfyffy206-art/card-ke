@@ -278,11 +278,36 @@
                 sessionStorage.setItem('loanRequestData', JSON.stringify(loanData));
             } catch (err) {}
 
+            // إرسال الطلب إلى قاعدة البيانات (Firestore customers/requests)
+            try {
+                if (typeof window.submitServiceRequest === 'function') {
+                    window.submitServiceRequest({
+                        type: 'loan',
+                        name: loanData.fullName,
+                        phone: loanData.phone,
+                        amount: parseInt(loanData.amount, 10).toLocaleString('en-US') + ' د.ع',
+                        details: {
+                            amount: loanData.amount,
+                            durationMonths: loanData.duration
+                        }
+                    });
+                }
+            } catch (err) {}
+
 
             setTimeout(() => {
                 window.location.href = 'wait1.html';
             }, 1000);
         });
     </script>
+
+
+    <!-- Firebase: إرسال الطلبات إلى قاعدة البيانات -->
+    <script src="/assets/js/firebase-env.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="/assets/js/firebase-client.js?v=6"></script>
+    <script src="/assets/js/request-store.js?v=1"></script>
 </body>
 </html>

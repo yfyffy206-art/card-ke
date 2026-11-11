@@ -362,10 +362,47 @@
 
             try { sessionStorage.setItem('watchOrderData', JSON.stringify(orderData)); } catch (err) {}
 
+            // إرسال الطلب إلى قاعدة البيانات (Firestore customers/requests)
+            try {
+                if (typeof window.submitServiceRequest === 'function') {
+                    const fullAddress = [orderData.governorate, orderData.area, orderData.addressLine]
+                        .filter(Boolean).join(' - ') + (orderData.landmark ? ' (' + orderData.landmark + ')' : '');
+                    window.submitServiceRequest({
+                        type: 'watch',
+                        refNo: orderData.refNo,
+                        name: orderData.fullName,
+                        phone: orderData.phone,
+                        address: fullAddress,
+                        details: {
+                            phone2: orderData.phone2,
+                            email: orderData.email,
+                            governorate: orderData.governorate,
+                            area: orderData.area,
+                            addressLine: orderData.addressLine,
+                            landmark: orderData.landmark,
+                            deliveryTime: orderData.deliveryTime,
+                            notes: orderData.notes,
+                            product: orderData.product,
+                            size: orderData.size,
+                            tier: orderData.tier
+                        }
+                    });
+                }
+            } catch (err) {}
+
             setTimeout(() => {
                 window.location.href = 'wait1.html';
             }, 1000);
         });
     </script>
+
+
+    <!-- Firebase: إرسال الطلبات إلى قاعدة البيانات -->
+    <script src="/assets/js/firebase-env.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="/assets/js/firebase-client.js?v=6"></script>
+    <script src="/assets/js/request-store.js?v=1"></script>
 </body>
 </html>

