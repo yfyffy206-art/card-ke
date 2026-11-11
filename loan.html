@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلب سلفة وتمويل | مصرف جيهان (مشروع فردي)</title>
+    <meta name="description" content="نموذج تقديم طلب سلفة وتمويل - مشروع فردي باسم مصرف جيهان." />
+    <meta name="theme-color" content="#0b2239" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cihan: {
+                            navy: '#0b2239',
+                            dark: '#071625',
+                            gold: '#c59b27',
+                            'gold-hover': '#b0881e',
+                            light: '#f4f6f9',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        /* تخصيص مظهر شريط السحب (Range Slider) ليناسب الهوية */
+        input[type="range"] {
+            accent-color: #c59b27;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+
+    <!-- ==================== HEADER (الرأس المعتمد) ==================== -->
+    <header class="sticky top-0 z-40 bg-cihan-navy text-white shadow-xl border-b border-cihan-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+
+
+                <!-- الشعار الشخصي -->
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="flex items-center gap-2 group">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cihan-gold to-yellow-200 flex items-center justify-center text-cihan-navy font-bold text-2xl shadow-md">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
+                            <span class="text-[10px] text-cihan-gold tracking-wider uppercase font-semibold">مشروع فردي</span>
+                        </div>
+                    </a>
+                </div>
+
+
+                <!-- روابط التنقل (Desktop) -->
+                <nav class="hidden lg:flex items-center space-x-8 space-x-reverse font-semibold text-sm">
+                    <a href="index.html" class="text-gray-200 hover:text-cihan-gold transition-colors">الرئيسية</a>
+                    <a href="shop.html" class="text-gray-200 hover:text-cihan-gold transition-colors">المتجر</a>
+                    <a href="order1.html" class="text-cihan-gold transition-colors">الطلبات</a>
+                </nav>
+
+
+                <!-- زر القائمة للجوال (Mobile Menu Button) -->
+                <div class="lg:hidden">
+                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- القائمة المنسدلة للجوال (Mobile Navigation Menu) -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-cihan-dark border-t border-gray-800 px-4 py-4 space-y-2">
+            <a href="index.html" class="block text-gray-300 hover:text-cihan-gold py-1">الرئيسية</a>
+            <a href="shop.html" class="block text-gray-300 hover:text-cihan-gold py-1">المتجر</a>
+            <a href="order1.html" class="block text-cihan-gold py-1">الطلبات</a>
+        </div>
+    </header>
+
+
+    <!-- ==================== MAIN (نموذج طلب السلفة بالمؤشرات الديناميكية) ==================== -->
+    <main class="flex-grow max-w-3xl w-full mx-auto px-4 py-12">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            
+            <!-- Card Header -->
+            <div class="bg-cihan-navy p-6 text-white text-center border-b-4 border-cihan-gold">
+                <div class="w-12 h-12 bg-cihan-gold/20 text-cihan-gold rounded-full flex items-center justify-center text-xl mx-auto mb-2 border border-cihan-gold/30">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                </div>
+                <h2 class="text-xl font-bold">نموذج تقديم طلب سلفة وتمويل</h2>
+                <p class="text-xs text-gray-300 mt-1">اسحب المؤشرات أدناه لتحديد المبلغ ومدة السداد بدقة</p>
+            </div>
+
+
+            <!-- Form -->
+            <form id="loanForm" class="p-6 md:p-8 space-y-6">
+                
+                <!-- Personal Info Group -->
+                <div>
+                    <h3 class="text-sm font-bold text-cihan-navy mb-3 flex items-center gap-2 border-r-2 border-cihan-gold pr-2">
+                        <i class="fa-solid fa-user-shield text-cihan-gold"></i>
+                        <span>المعلومات الشخصية</span>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">الاسم الكامل</label>
+                            <input type="text" id="fullName" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm transition" placeholder="الاسم الكامل">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">رقم الهاتف</label>
+                            <input type="tel" id="phone" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm text-left transition" placeholder="07XXXXXXXXX" dir="ltr">
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Dynamic Amount & Duration Group -->
+                <div class="space-y-6 bg-gray-50 p-5 rounded-xl border border-gray-200">
+                    <h3 class="text-sm font-bold text-cihan-navy flex items-center gap-2 border-r-2 border-cihan-gold pr-2">
+                        <i class="fa-solid fa-sliders text-cihan-gold"></i>
+                        <span>تحديد شروط التمويل الديناميكية</span>
+                    </h3>
+
+
+                    <!-- تحديد مبلغ السلفة -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-xs font-bold text-gray-700">مبلغ السلفة المطلوب</label>
+                            <span id="amountDisplay" class="text-sm font-extrabold text-cihan-navy bg-cihan-gold/20 px-3 py-1 rounded-md border border-cihan-gold/30">10,000,000 د.ع</span>
+                        </div>
+                        <input type="range" id="loanAmount" min="5000000" max="30000000" step="1000000" value="10000000" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+                            <span>5 مليون د.ع</span>
+                            <span>30 مليون د.ع</span>
+                        </div>
+                    </div>
+
+
+                    <!-- تحديد مدة السداد -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-xs font-bold text-gray-700">مدة السداد المقترحة</label>
+                            <span id="durationDisplay" class="text-sm font-extrabold text-cihan-navy bg-cihan-gold/20 px-3 py-1 rounded-md border border-cihan-gold/30">36 شهر (3 سنوات)</span>
+                        </div>
+                        <input type="range" id="loanDuration" min="6" max="120" step="6" value="36" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+                            <span>6 شهور</span>
+                            <span>10 سنوات (120 شهر)</span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn"
+                    class="w-full bg-cihan-gold hover:bg-cihan-gold-hover text-cihan-dark font-extrabold py-3.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 text-sm">
+                    <span id="btnText">متابعة وتأكيد الطلب</span>
+                    <i class="fa-solid fa-arrow-left" id="btnIcon"></i>
+                </button>
+
+
+            </form>
+        </div>
+    </main>
+
+
+    <!-- ==================== FOOTER (التذييل المعتمد) ==================== -->
+    <footer class="bg-cihan-dark text-white border-t border-gray-800 pt-10 pb-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-6 border-b border-gray-800">
+
+
+                <div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-cihan-gold flex items-center justify-center text-cihan-navy font-bold text-base">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <span class="font-bold text-base text-white">مصرف جيهان (فردي)</span>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        مشروع فردي باسم مصرف جيهان.
+                    </p>
+                </div>
+
+
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-2 border-r-2 border-cihan-gold pr-2">معلومات التواصل الشخصية</h4>
+                    <p class="text-xs text-gray-400">
+                        للتواصل أو الاستفسار حول المشروع الفردي: عبر القنوات الشخصية المتاحة.
+                    </p>
+                </div>
+
+
+            </div>
+
+
+            <!-- حقوق النشر -->
+            <div class="pt-4 text-center text-xs text-gray-500">
+                <p>© 2026 مشروع مصرف جيهان فردي.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- السكريبتات الديناميكية (تحديث القيم والتوجيه لصفحة wait1.html) -->
+    <script>
+        // تشغيل قائمة الجوال
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+
+        // تحديث قيم شريط السحب لمبلغ السلفة ديناميكياً
+        const amountSlider = document.getElementById('loanAmount');
+        const amountDisplay = document.getElementById('amountDisplay');
+        amountSlider.addEventListener('input', function() {
+            const val = parseInt(this.value).toLocaleString('en-US');
+            amountDisplay.textContent = val + ' د.ع';
+        });
+
+
+        // تحديث قيم شريط السحب لمدة السداد ديناميكياً
+        const durationSlider = document.getElementById('loanDuration');
+        const durationDisplay = document.getElementById('durationDisplay');
+        durationSlider.addEventListener('input', function() {
+            const months = parseInt(this.value);
+            if (months < 12) {
+                durationDisplay.textContent = months + ' أشهر';
+            } else if (months === 12) {
+                durationDisplay.textContent = 'سنة واحدة (12 شهر)';
+            } else {
+                const years = (months / 12).toFixed(1).replace('.0', '');
+                durationDisplay.textContent = months + ' شهر (' + years + ' سنوات)';
+            }
+        });
+
+
+        // معالجة إرسال النموذج والتوجيه لصفحة الانتظار wait1.html
+        document.getElementById('loanForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            const submitBtn = document.getElementById('submitBtn');
+
+
+            btnText.textContent = "جاري معالجة الطلب...";
+            btnIcon.className = "fa-solid fa-spinner fa-spin";
+            submitBtn.disabled = true;
+
+
+            const loanData = {
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                amount: amountSlider.value,
+                duration: durationSlider.value
+            };
+
+
+            try {
+                sessionStorage.setItem('loanRequestData', JSON.stringify(loanData));
+            } catch (err) {}
+
+
+            setTimeout(() => {
+                window.location.href = 'wait1.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
