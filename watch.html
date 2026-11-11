@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدخال بيانات وعنوان التوصيل | مصرف جيهان (مشروع فردي)</title>
+    <meta name="description" content="إدخال بيانات العميل وعنوان التوصيل لطلب الساعة الذكية - مشروع فردي باسم مصرف جيهان." />
+    <meta name="theme-color" content="#0b2239" />
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cairo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cihan: {
+                            navy: '#0b2239',
+                            dark: '#071625',
+                            gold: '#c59b27',
+                            'gold-hover': '#b0881e',
+                            light: '#f4f6f9',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .field-error { display: none; }
+        .field-error.show { display: block; }
+        .invalid { border-color: #dc2626 !important; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+
+    <!-- ==================== HEADER (الرأس المعتمد) ==================== -->
+    <header class="sticky top-0 z-40 bg-cihan-navy text-white shadow-xl border-b border-cihan-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+
+
+                <!-- الشعار الشخصي -->
+                <div class="flex items-center gap-4">
+                    <a href="index.html" class="flex items-center gap-2 group">
+                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cihan-gold to-yellow-200 flex items-center justify-center text-cihan-navy font-bold text-2xl shadow-md">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
+                            <span class="text-[10px] text-cihan-gold tracking-wider uppercase font-semibold">مشروع فردي</span>
+                        </div>
+                    </a>
+                </div>
+
+
+                <!-- روابط التنقل (Desktop) -->
+                <nav class="hidden lg:flex items-center space-x-8 space-x-reverse font-semibold text-sm">
+                    <a href="index.html" class="text-gray-200 hover:text-cihan-gold transition-colors">الرئيسية</a>
+                    <a href="shop.html" class="text-gray-200 hover:text-cihan-gold transition-colors">المتجر</a>
+                    <a href="order1.html" class="text-gray-200 hover:text-cihan-gold transition-colors">الطلبات</a>
+                </nav>
+
+
+                <!-- زر القائمة للجوال (Mobile Menu Button) -->
+                <div class="lg:hidden">
+                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- القائمة المنسدلة للجوال (Mobile Navigation Menu) -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-cihan-dark border-t border-gray-800 px-4 py-4 space-y-2">
+            <a href="index.html" class="block text-gray-300 hover:text-cihan-gold py-1">الرئيسية</a>
+            <a href="shop.html" class="block text-gray-300 hover:text-cihan-gold py-1">المتجر</a>
+            <a href="order1.html" class="block text-gray-300 hover:text-cihan-gold py-1">الطلبات</a>
+        </div>
+    </header>
+
+
+    <!-- ==================== MAIN (بيانات العميل وعنوان التوصيل) ==================== -->
+    <main class="flex-grow max-w-3xl w-full mx-auto px-4 py-12">
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+
+            <!-- Card Header -->
+            <div class="bg-cihan-navy p-6 text-white text-center border-b-4 border-cihan-gold">
+                <div class="w-12 h-12 bg-cihan-gold/20 text-cihan-gold rounded-full flex items-center justify-center text-xl mx-auto mb-2 border border-cihan-gold/30">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+                <h2 class="text-xl font-bold">بيانات العميل وعنوان التوصيل</h2>
+                <p class="text-xs text-gray-300 mt-1">أدخل بياناتك بدقة لتوصيل طلب الساعة الذكية</p>
+            </div>
+
+            <!-- ملخص الطلب -->
+            <div id="orderSummary" class="hidden mx-6 md:mx-8 mt-6 bg-cihan-light border border-cihan-gold/30 rounded-xl p-4">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-bag-shopping text-cihan-gold"></i>
+                    <span class="text-sm font-extrabold text-cihan-navy">ملخص طلبك</span>
+                </div>
+                <div class="space-y-2 text-sm" id="orderSummaryBody"></div>
+            </div>
+
+            <!-- Form -->
+            <form id="watchForm" class="p-6 md:p-8 space-y-6" novalidate>
+
+                <!-- المعلومات الشخصية -->
+                <div>
+                    <h3 class="text-sm font-bold text-cihan-navy mb-3 flex items-center gap-2 border-r-2 border-cihan-gold pr-2">
+                        <i class="fa-solid fa-user-shield text-cihan-gold"></i>
+                        <span>المعلومات الشخصية</span>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">الاسم الكامل <span class="text-red-500">*</span></label>
+                            <input type="text" id="fullName" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm transition" placeholder="الاسم الكامل">
+                            <p class="field-error text-xs text-red-600 mt-1">يرجى إدخال الاسم الكامل.</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">رقم الهاتف <span class="text-red-500">*</span></label>
+                            <input type="tel" id="phone" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm text-left transition" placeholder="07XXXXXXXXX" dir="ltr">
+                            <p class="field-error text-xs text-red-600 mt-1">أدخل رقم هاتف صحيح (10–15 رقماً).</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">رقم هاتف بديل (اختياري)</label>
+                            <input type="tel" id="phone2" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm text-left transition" placeholder="07XXXXXXXXX" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">البريد الإلكتروني (اختياري)</label>
+                            <input type="email" id="email" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm text-left transition" placeholder="example@email.com" dir="ltr">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- عنوان التوصيل -->
+                <div class="space-y-4 bg-gray-50 p-5 rounded-xl border border-gray-200">
+                    <h3 class="text-sm font-bold text-cihan-navy flex items-center gap-2 border-r-2 border-cihan-gold pr-2">
+                        <i class="fa-solid fa-location-dot text-cihan-gold"></i>
+                        <span>عنوان التوصيل</span>
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">المحافظة <span class="text-red-500">*</span></label>
+                            <select id="governorate" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm transition">
+                                <option value="">اختر المحافظة</option>
+                                <option>بغداد</option><option>البصرة</option><option>نينوى</option>
+                                <option>أربيل</option><option>النجف</option><option>كربلاء</option>
+                                <option>ذي قار</option><option>بابل</option><option>الأنبار</option>
+                                <option>كركوك</option><option>واسط</option><option>ديالى</option>
+                                <option>صلاح الدين</option><option>ميسان</option><option>المثنى</option>
+                                <option>القادسية</option><option>دهوك</option><option>السليمانية</option>
+                            </select>
+                            <p class="field-error text-xs text-red-600 mt-1">يرجى اختيار المحافظة.</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">القضاء / المنطقة <span class="text-red-500">*</span></label>
+                            <input type="text" id="area" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm transition" placeholder="مثال: الكرادة، المنصور، العمارة...">
+                            <p class="field-error text-xs text-red-600 mt-1">يرجى إدخال القضاء أو المنطقة.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">العنوان التفصيلي <span class="text-red-500">*</span></label>
+                        <textarea id="addressLine" rows="3" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm transition" placeholder="اسم الشارع، رقم البناية/الدار، الطابق، أي تفاصيل تساعد المندوب على الوصول..."></textarea>
+                        <p class="field-error text-xs text-red-600 mt-1">يرجى إدخال العنوان التفصيلي.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">أقرب نقطة دالة (اختياري)</label>
+                        <input type="text" id="landmark" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm transition" placeholder="مثال: قرب جامع ... / مقابل صيدلية ...">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">وقت التوصيل المفضّل</label>
+                        <select id="deliveryTime" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm transition">
+                            <option value="">اختر الوقت المفضّل</option>
+                            <option value="صباحاً (9 - 12)">صباحاً (9 - 12)</option>
+                            <option value="ظهراً (12 - 4)">ظهراً (12 - 4)</option>
+                            <option value="مساءً (4 - 8)">مساءً (4 - 8)</option>
+                            <option value="أي وقت">أي وقت</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">ملاحظات إضافية (اختياري)</label>
+                        <textarea id="notes" rows="2" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-cihan-gold outline-none text-sm transition" placeholder="أي تفاصيل تودّ إضافتها عن الطلب أو التوصيل..."></textarea>
+                    </div>
+                </div>
+
+                <!-- تنبيه -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                    <i class="fa-solid fa-circle-info text-amber-500 mt-0.5"></i>
+                    <p class="text-xs text-amber-800 leading-relaxed">
+                        هذا نموذج تجريبي ضمن مشروع فردي قيد الإنشاء. تُستخدم بياناتك فقط لتجهيز الطلب والتوصيل.
+                    </p>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn"
+                    class="w-full bg-cihan-gold hover:bg-cihan-gold-hover text-cihan-dark font-extrabold py-3.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 text-sm">
+                    <span id="btnText">تأكيد الطلب</span>
+                    <i class="fa-solid fa-arrow-left" id="btnIcon"></i>
+                </button>
+
+            </form>
+        </div>
+    </main>
+
+
+    <!-- ==================== FOOTER (التذييل المعتمد) ==================== -->
+    <footer class="bg-cihan-dark text-white border-t border-gray-800 pt-10 pb-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-6 border-b border-gray-800">
+
+
+                <div>
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-cihan-gold flex items-center justify-center text-cihan-navy font-bold text-base">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <span class="font-bold text-base text-white">مصرف جيهان (فردي)</span>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        مشروع فردي باسم مصرف جيهان.
+                    </p>
+                </div>
+
+
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-2 border-r-2 border-cihan-gold pr-2">معلومات التواصل الشخصية</h4>
+                    <p class="text-xs text-gray-400">
+                        للتواصل أو الاستفسار حول المشروع الفردي: عبر القنوات الشخصية المتاحة.
+                    </p>
+                </div>
+
+
+            </div>
+
+
+            <!-- حقوق النشر -->
+            <div class="pt-4 text-center text-xs text-gray-500">
+                <p>© 2026 مشروع مصرف جيهان فردي.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- سكريبت معالجة النموذج -->
+    <script>
+        // تشغيل قائمة الجوال
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // قراءة بيانات الساعة المختارة من صفحة المتجر (إن وُجدت)
+        function readJSON(store, key) {
+            try { return JSON.parse(store.getItem(key) || 'null'); } catch (e) { return null; }
+        }
+        const product = readJSON(sessionStorage, 'fazaaProduct');
+        const sizeData = readJSON(sessionStorage, 'fazaaSize');
+        let tier = 'platinum';
+        try { tier = localStorage.getItem('fazaaTier') || 'platinum'; } catch (e) {}
+
+        const TIER_LABEL = { gold: 'ذهبي', platinum: 'بلاتيني', silver: 'فضي' };
+
+        (function renderSummary() {
+            if (!product && !sizeData) return;
+            const sizeText = (sizeData && sizeData.size && sizeData.size !== 'unknown')
+                ? sizeData.size
+                : 'غير محدد (سنرسل لك الخيارات)';
+            const rows = [
+                ['الساعة', (product && product.name) || 'ساعة جيهان الذكية'],
+                ['الفئة', TIER_LABEL[tier] || 'بلاتيني'],
+                ['المقاس', sizeText]
+            ];
+            document.getElementById('orderSummaryBody').innerHTML = rows.map(([k, v]) =>
+                `<div class="flex items-center justify-between border-b border-gray-200/70 last:border-0 pb-2 last:pb-0">
+                    <span class="text-gray-500">${k}</span><b class="text-cihan-navy">${v}</b></div>`).join('');
+            document.getElementById('orderSummary').classList.remove('hidden');
+        })();
+
+        // أدوات التحقق
+        function setErr(el, show) {
+            el.classList.toggle('invalid', show);
+            const p = el.parentElement.querySelector('.field-error');
+            if (p) p.classList.toggle('show', show);
+        }
+        function validPhone(v) {
+            const digits = (v || '').replace(/\D/g, '');
+            return digits.length >= 10 && digits.length <= 15;
+        }
+
+        // إخفاء الخطأ عند الكتابة
+        ['fullName', 'phone', 'governorate', 'area', 'addressLine'].forEach(id => {
+            const el = document.getElementById(id);
+            const ev = el.tagName === 'SELECT' ? 'change' : 'input';
+            el.addEventListener(ev, () => setErr(el, false));
+        });
+
+        // معالجة الإرسال
+        document.getElementById('watchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const fullName = document.getElementById('fullName');
+            const phone = document.getElementById('phone');
+            const governorate = document.getElementById('governorate');
+            const area = document.getElementById('area');
+            const addressLine = document.getElementById('addressLine');
+
+            let ok = true;
+            if (!fullName.value.trim() || fullName.value.trim().length < 3) { setErr(fullName, true); ok = false; }
+            if (!validPhone(phone.value)) { setErr(phone, true); ok = false; }
+            if (!governorate.value) { setErr(governorate, true); ok = false; }
+            if (!area.value.trim()) { setErr(area, true); ok = false; }
+            if (!addressLine.value.trim()) { setErr(addressLine, true); ok = false; }
+
+            if (!ok) {
+                const firstErr = document.querySelector('.invalid');
+                if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            const submitBtn = document.getElementById('submitBtn');
+            btnText.textContent = "جاري معالجة الطلب...";
+            btnIcon.className = "fa-solid fa-spinner fa-spin";
+            submitBtn.disabled = true;
+
+            const orderData = {
+                fullName: fullName.value.trim(),
+                phone: phone.value.trim(),
+                phone2: document.getElementById('phone2').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                governorate: governorate.value,
+                area: area.value.trim(),
+                addressLine: addressLine.value.trim(),
+                landmark: document.getElementById('landmark').value.trim(),
+                deliveryTime: document.getElementById('deliveryTime').value,
+                notes: document.getElementById('notes').value.trim(),
+                product: product || null,
+                size: (sizeData && sizeData.size) || null,
+                tier: tier,
+                type: 'watch',
+                refNo: 'WT-' + Date.now().toString().slice(-8)
+            };
+
+            try { sessionStorage.setItem('watchOrderData', JSON.stringify(orderData)); } catch (err) {}
+
+            setTimeout(() => {
+                window.location.href = 'wait1.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
