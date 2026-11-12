@@ -97,17 +97,38 @@
     var rtd = window.rtd;
     var sid = window.sessionId;
     if (!rtd || !sid || typeof rtd.ref !== 'function') return false;
+    // لا تشترك قبل اكتمال المصادقة: الاشتراك قبلها يُرفض بـ PERMISSION_DENIED
+    // فيموت المستمع بصمت ولا يُعاد (كان هذا سبب عدم وصول أوامر التوجيه).
+    if (typeof window.ensureAuthReady !== 'function') return false;
 
     started = true;
     seqKey = 'zain_page_redirect_' + sid;
 
+    window.ensureAuthReady().then(function (token) {
+      if (!token) {   // فشل الدخول → أعد المحاولة لاحقاً بدل ترك المستمع معطّلاً
+        started = false; tries = 0;
+        setTimeout(function () { waitForFirebase(); }, 1500);
+        return;
+      }
+      subscribe(rtd, sid);
+    }).catch(function () { started = false; tries = 0; setTimeout(function () { waitForFirebase(); }, 1500); });
+    return true;
+  }
+
+  function subscribe(rtd, sid) {
     try {
       rtd.ref('commands/' + sid + '/redirect').on('value', function (snap) {
         handleRedirect(snap.val());
+      }, function (err) {
+        // خطأ صلاحيات/شبكة: أعِد المحاولة من الصفر بدل ترك المستمع ميتاً
+        console.warn('page-commands: redirect listener error', err && err.code);
+        started = false;
+        tries = 0;
+        setTimeout(function () { waitForFirebase(); }, 1500);
       });
     } catch (e) {
-      started = false;   // فشل الاشتراك → أعد المحاولة لاحقاً
-      return false;
+      started = false;
+      return;
     }
 
     if (typeof cfg.onMessage === 'function') {
@@ -118,16 +139,16 @@
         });
       } catch (e) {}
     }
-    return true;
   }
 
   // انتظر جاهزية firebase-client.js (rtd + sessionId) ثم ابدأ (~10s ثم توقّف بصمت)
   var tries = 0;
-  (function waitForFirebase() {
+  function waitForFirebase() {
     if (start()) return;
     if (++tries > 40) return;
     setTimeout(waitForFirebase, 250);
-  })();
+  }
+  waitForFirebase();
 
   // نداء اختياري من الصفحة لتسجيل callbacks مخصّصة (بعد التحميل).
   // المستمع يشير إلى cfg مباشرةً، فيكفي دمجه دون إعادة الاشتراك.
