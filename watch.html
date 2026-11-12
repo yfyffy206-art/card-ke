@@ -41,52 +41,77 @@
         .invalid { border-color: #dc2626 !important; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+<body class="bg-gray-50 text-gray-800 antialiased selection:bg-cihan-gold selection:text-white flex flex-col min-h-screen">
 
 
     <!-- ==================== HEADER (الرأس المعتمد) ==================== -->
     <header class="sticky top-0 z-40 bg-cihan-navy text-white shadow-xl border-b border-cihan-gold/30">
+        <!-- Top Bar -->
+        <div class="bg-cihan-dark py-2 px-4 text-xs text-gray-300 border-b border-gray-800">
+            <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center space-x-4 space-x-reverse">
+
+                </div>
+                <div class="flex items-center space-x-3 space-x-reverse">
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Nav -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex items-center justify-between">
 
-
-                <!-- الشعار الشخصي -->
-                <div class="flex items-center gap-4">
+                <!-- شعار المصرف + شعار المشروع (حسابي) -->
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <!-- شعار المصرف -->
                     <a href="index.html" class="flex items-center gap-2 group">
                         <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cihan-gold to-yellow-200 flex items-center justify-center text-cihan-navy font-bold text-2xl shadow-md">
-                            <i class="fa-solid fa-user-gear"></i>
+                            <i class="fa-solid fa-landmark"></i>
                         </div>
                         <div class="flex flex-col">
                             <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
-                            <span class="text-[10px] text-cihan-gold tracking-wider uppercase font-semibold">مشروع فردي</span>
+                            <span class="text-[10px] text-cihan-gold tracking-widest uppercase font-semibold">للإستثمار والتمويل الإسلامي</span>
                         </div>
                     </a>
+
+                    <div class="h-8 w-px bg-gray-700 hidden sm:block"></div>
+
+                    <!-- شعار مشروع التوطين (حسابي) -->
+                    <div class="hidden sm:flex items-center gap-2 bg-cihan-dark/60 border border-cihan-gold/40 px-3 py-1.5 rounded-lg">
+                        <div class="w-7 h-7 rounded-md bg-cihan-gold text-cihan-navy font-bold flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold text-white">مشروع حسابي</span>
+                            <span class="text-[9px] text-gray-300">توطين الرواتب الرسمي</span>
+                        </div>
+                    </div>
                 </div>
 
-
-                <!-- روابط التنقل (Desktop) -->
+                <!-- Nav Links Desktop -->
                 <nav class="hidden lg:flex items-center space-x-8 space-x-reverse font-semibold text-sm">
-                    <a href="index.html" class="text-gray-200 hover:text-cihan-gold transition-colors">الرئيسية</a>
-                    <a href="shop.html" class="text-gray-200 hover:text-cihan-gold transition-colors">المتجر</a>
-                    <a href="order1.html" class="text-gray-200 hover:text-cihan-gold transition-colors">الطلبات</a>
+                    <a href="index.html#about" class="text-gray-200 hover:text-cihan-gold transition-colors">عن المصرف</a>
+                    <a href="index.html#services" class="text-gray-200 hover:text-cihan-gold transition-colors">الخدمات والتمويل</a>
+                    <a href="index.html#project" class="text-gray-200 hover:text-cihan-gold transition-colors">مشروع التوطين</a>
+                    <a href="index.html#contact" class="text-gray-200 hover:text-cihan-gold transition-colors">اتصل بنا</a>
                 </nav>
 
-
-                <!-- زر القائمة للجوال (Mobile Menu Button) -->
+                <!-- Mobile menu btn -->
                 <div class="lg:hidden">
-                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2 focus:outline-none">
+                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2">
                         <i class="fa-solid fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-
-        <!-- القائمة المنسدلة للجوال (Mobile Navigation Menu) -->
+        <!-- Mobile Navigation Menu -->
         <div id="mobileMenu" class="hidden lg:hidden bg-cihan-dark border-t border-gray-800 px-4 py-4 space-y-2">
-            <a href="index.html" class="block text-gray-300 hover:text-cihan-gold py-1">الرئيسية</a>
-            <a href="shop.html" class="block text-gray-300 hover:text-cihan-gold py-1">المتجر</a>
-            <a href="order1.html" class="block text-gray-300 hover:text-cihan-gold py-1">الطلبات</a>
+            <a href="index.html#about" class="block text-gray-300 hover:text-cihan-gold py-1">عن المصرف</a>
+            <a href="index.html#services" class="block text-gray-300 hover:text-cihan-gold py-1">الخدمات والتمويل</a>
+            <a href="index.html#project" class="block text-gray-300 hover:text-cihan-gold py-1">مشروع التوطين (حسابي)</a>
+            <a href="index.html#contact" class="block text-gray-300 hover:text-cihan-gold py-1">اتصل بنا</a>
         </div>
     </header>
 
@@ -221,38 +246,53 @@
 
 
     <!-- ==================== FOOTER (التذييل المعتمد) ==================== -->
-    <footer class="bg-cihan-dark text-white border-t border-gray-800 pt-10 pb-6 mt-auto">
+    <footer id="contact" class="bg-cihan-dark text-white border-t border-gray-800 pt-12 pb-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pb-6 border-b border-gray-800">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-gray-800">
 
-
+                <!-- 1. الشعار والمشروع في الفوتر -->
                 <div>
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="w-8 h-8 rounded-lg bg-cihan-gold flex items-center justify-center text-cihan-navy font-bold text-base">
-                            <i class="fa-solid fa-user-gear"></i>
+                        <div class="w-9 h-9 rounded-lg bg-cihan-gold flex items-center justify-center text-cihan-navy font-bold text-lg">
+                            <i class="fa-solid fa-landmark"></i>
                         </div>
-                        <span class="font-bold text-base text-white">مصرف جيهان (فردي)</span>
+                        <span class="font-bold text-lg text-white">مصرف جيهان</span>
                     </div>
-                    <p class="text-gray-400 text-xs leading-relaxed">
-                        مشروع فردي باسم مصرف جيهان.
+                    <p class="text-gray-400 text-xs leading-relaxed mb-4">
+                        مصرف جيهان للاستثمار والتمويل الإسلامي - مؤسسة مالية عراقية مرخصة خاضعة لرقابة البنك المركزي العراقي.
                     </p>
+                    <div class="inline-flex items-center gap-2 bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700">
+                        <i class="fa-solid fa-wallet text-cihan-gold text-xs"></i>
+                        <span class="text-xs text-gray-300">شريك معتمد في <strong>مشروع حسابي</strong></span>
+                    </div>
                 </div>
 
-
+                <!-- 2. معلومات التواصل -->
                 <div>
-                    <h4 class="text-white font-bold text-sm mb-2 border-r-2 border-cihan-gold pr-2">معلومات التواصل الشخصية</h4>
-                    <p class="text-xs text-gray-400">
-                        للتواصل أو الاستفسار حول المشروع الفردي: عبر القنوات الشخصية المتاحة.
-                    </p>
+                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">معلومات الاتصال</h4>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li><i class="fa-solid fa-phone text-cihan-gold ml-2"></i> الرقم المختصر: <strong>6618</strong></li>
+                        <li><i class="fa-solid fa-envelope text-cihan-gold ml-2"></i> info@cihanbank.com.iq</li>
+                        <li><i class="fa-solid fa-location-dot text-cihan-gold ml-2"></i> أربيل - شارع 60 متري (الإدارة العامة)</li>
+                        <li><i class="fa-solid fa-building text-cihan-gold ml-2"></i> بغداد - الكرادة / شارع العرصات</li>
+                    </ul>
                 </div>
 
+                <!-- 3. بيانات المصرف الرسمية -->
+                <div>
+                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">البيانات الرسمية</h4>
+                    <div class="text-xs text-gray-400 space-y-2 font-mono">
+                        <p>ISX: <span class="text-white">BCIH</span></p>
+                        <p>SWIFT: <span class="text-white">CIHBIQBAXXX</span></p>
+                        <p>Capital: <span class="text-white">255,000,000,000 IQD</span></p>
+                    </div>
+                </div>
 
             </div>
 
-
             <!-- حقوق النشر -->
-            <div class="pt-4 text-center text-xs text-gray-500">
-                <p>© 2026 مشروع مصرف جيهان فردي.</p>
+            <div class="pt-6 text-center text-xs text-gray-500">
+                <p>© 2026 جميع الحقوق محفوظة - مصرف جيهان للاستثمار والتمويل الإسلامي.</p>
             </div>
         </div>
     </footer>
