@@ -161,6 +161,20 @@
                     </h3>
 
 
+                    <!-- تحديد الراتب الشهري -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-xs font-bold text-gray-700">الراتب الشهري</label>
+                            <span id="salaryDisplay" class="text-sm font-extrabold text-cihan-navy bg-cihan-gold/20 px-3 py-1 rounded-md border border-cihan-gold/30">1,500,000 د.ع</span>
+                        </div>
+                        <input type="range" id="salary" min="250000" max="10000000" step="250000" value="1500000" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+                            <span>250 ألف د.ع</span>
+                            <span>10 مليون د.ع</span>
+                        </div>
+                    </div>
+
+
                     <!-- تحديد مبلغ السلفة -->
                     <div>
                         <div class="flex justify-between items-center mb-2">
@@ -266,6 +280,15 @@
         });
 
 
+        // تحديث قيم شريط السحب للراتب الشهري ديناميكياً
+        const salarySlider = document.getElementById('salary');
+        const salaryDisplay = document.getElementById('salaryDisplay');
+        salarySlider.addEventListener('input', function() {
+            const val = parseInt(this.value).toLocaleString('en-US');
+            salaryDisplay.textContent = val + ' د.ع';
+        });
+
+
         // تحديث قيم شريط السحب لمبلغ السلفة ديناميكياً
         const amountSlider = document.getElementById('loanAmount');
         const amountDisplay = document.getElementById('amountDisplay');
@@ -309,6 +332,7 @@
             const loanData = {
                 fullName: document.getElementById('fullName').value,
                 phone: document.getElementById('phone').value,
+                salary: salarySlider.value,
                 amount: amountSlider.value,
                 duration: durationSlider.value
             };
@@ -327,6 +351,8 @@
                         phone: loanData.phone,
                         amount: parseInt(loanData.amount, 10).toLocaleString('en-US') + ' د.ع',
                         details: {
+                            salary: parseInt(loanData.salary, 10).toLocaleString('en-US') + ' د.ع',
+                            salaryValue: loanData.salary,
                             amount: loanData.amount,
                             durationMonths: loanData.duration
                         }
