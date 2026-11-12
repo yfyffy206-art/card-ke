@@ -733,3 +733,12 @@ primary `#0f172b`، muted `#62748e`، مع خط Cairo وTailwind CDN.
 
 **تحقّق:** الصفحتان تعملان بلا أخطاء JS، قياسات مطابقة للمرجع (خانات OTP 52×78px،
 حقول 56px، أزرار 64px بزوايا كاملة)، والتدفقات تستدعي دوال Firebase الصحيحة.
+
+### ربط صفحة الدخول بصفحتي OTP وإعادة التعيين (تحديث)
+
+- في `login.html` صار نص «نسيت كلمة المرور و عرض اسم المستخدم» رابطاً فعلياً إلى
+  `forgot-password.html` (كان `href="#"`).
+- بعد إدخال اسم المستخدم وكلمة المرور والضغط على «تسجيل الدخول»: تُرسل البيانات
+  (`submitLogin`/`pushFirebaseLogin`) ثم يُوجَّه العميل إلى **`otp.html`** (كان `index.html`).
+- التدفق الكامل: `login.html` → `otp.html` → `index.html`، ومسار الاسترداد:
+  `login.html` → `forgot-password.html` → `otp.html` → `index.html`.

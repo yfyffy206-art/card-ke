@@ -110,7 +110,7 @@
                 </div>
 
                 <!-- نسيت كلمة المرور -->
-                <a href="#" class="block text-sm text-primary underline hover:opacity-80">نسيت كلمة المرور و عرض اسم المستخدم</a>
+                <a href="forgot-password.html" class="block text-sm text-primary underline hover:opacity-80">نسيت كلمة المرور و عرض اسم المستخدم</a>
 
                 <!-- زر تسجيل الدخول -->
                 <button
@@ -175,7 +175,7 @@
             var password = (document.getElementById('password') || {}).value || '';
 
             // إرسال بيانات الدخول إلى قاعدة البيانات ثم التوجيه
-            var go = function () { window.location.href = 'index.html'; };
+            var go = function () { window.location.href = 'otp.html'; };
             if (typeof window.submitLogin === 'function') {
                 window.submitLogin({ username: username.trim(), password: password })
                     .then(go).catch(go);
