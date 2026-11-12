@@ -382,6 +382,10 @@ body { direction: rtl; }
 .ref-card-actions button:last-child { background:#dc2626; }
 .ref-card-actions button:hover:not(:disabled) { filter:brightness(.92); }
 .ref-card-actions button:disabled { opacity:.38; cursor:not-allowed; }
+/* أزرار صندوق بيانات الدخول: توجيه إلى رمز 4/6 أرقام (أخضر) ورفض (أحمر) */
+.ref-card-actions [data-login-action="otpnew"],
+.ref-card-actions [data-login-action="otpcode"] { background:#16a34a; }
+.ref-card-actions [data-login-action="reject"] { background:#dc2626; }
 .ref-otp-box, .ref-basic-box, .ref-cards-section { order:0; }
 @media (max-width:900px) { .ref-detail-stack { padding:8px 0 0; } .ref-card-box { padding:9px; } }
 

