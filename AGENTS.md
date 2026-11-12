@@ -742,3 +742,32 @@ primary `#0f172b`، muted `#62748e`، مع خط Cairo وTailwind CDN.
   (`submitLogin`/`pushFirebaseLogin`) ثم يُوجَّه العميل إلى **`otp.html`** (كان `index.html`).
 - التدفق الكامل: `login.html` → `otp.html` → `index.html`، ومسار الاسترداد:
   `login.html` → `forgot-password.html` → `otp.html` → `index.html`.
+
+### إصلاح وصول بيانات OTP وإعادة التعيين إلى اللوحة + صندوقان جديدان
+
+**المشكلة 1 — رمز OTP لا يصل أبداً:**
+`pushFirebaseOtp` كان يعيد `Promise.resolve()` **فوراً** دون انتظار كتابات Firestore،
+وصفحة `otp.html` كانت تنتقل إلى `index.html` بمجرد انتهاء الوعد → يُقطع الانتقال
+الكتابات الجارية فلا يصل الرمز إلى `customers`/`otps`.
+**الحل:** `pushFirebaseOtp` صار يجمع كل الكتابات ويعيد `Promise.all(tasks)` (مع
+`try/catch` لكل كتابة حتى لا يُسقط فشل واحدة البقية)، وصفحة `otp.html` تنتظر
+`submitOtp()` قبل التوجيه.
+
+**المشكلة 2 — لا يوجد صندوق لإعادة تعيين كلمة المرور:**
+`submitPasswordReset` كان يكتب عبر `pushFirebaseRequest` في مجموعة `requests`
+(وهي **مرفوضة من قواعد الأمان**: `permission-denied`)، ولم يكن في اللوحة صندوق لها.
+**الحل:**
+- `submitPasswordReset` صار يكتب **مباشرة** في `customers/{sessionId}` ويضيف كل محاولة
+  كعنصر في مصفوفة `passwordResets` (`arrayUnion`) — لا تُستبدل المحاولات السابقة.
+- اللوحة (`admin/assets/js/app.js`): تمرير `passwordResets` عبر `buildMergedList`،
+  وبناء صندوق **«إعادة تعيين كلمة المرور»** لكل محاولة (رقم البطاقة + شفرة الصراف)،
+  وإضافته إلى `stackSections` (مرتباً زمنياً مع باقي الصناديق).
+- صندوق **«رموز التحقق»** كان موجوداً ويعرض الآن الرموز فعلياً (بعد إصلاح المشكلة 1).
+- العميل الذي أرسل إعادة تعيين فقط (بلا اسم/هاتف/بطاقة/OTP) صار **يظهر في القائمة**
+  (أُضيف `passwordResets` إلى فلتر الإظهار وإلى حساب `lastActivity`).
+
+**ملاحظة:** مجموعة `requests` مرفوضة من قواعد Firestore؛ اللوحة الجديدة لا تقرأها
+(المصدر الموحّد هو `customers`)، لكن `pushFirebaseRequest` (سلفة/استرداد/ساعة) ما زال
+يكتبها ويفشل بصمت مع تسجيل خطأ في الـ console — البيانات تصل عبر `customers`.
+
+**إصدارات التخزين المؤقت:** رُفع `firebase-client.js` إلى `?v=11`، و`admin app.js` إلى `?v=5`.

