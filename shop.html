@@ -295,7 +295,7 @@ snaptr('track', 'PAGE_VIEW');
 
 
         // مصفوفة المنتجات (الساعات الذكية) — النصوص مضمّنة مباشرة بلا نظام ترجمة خارجي
-        // صورة احتياطية موجودة في المستودع حتى تُرفع صور المنتجات الحقيقية إلى /images/products/
+        // صورة احتياطية موجودة في المستودع في حال تعذّر تحميل صورة المنتج
         const WATCH_IMG_FALLBACK = '/assets/images/nfc2.png';
         const products = [
             { id: 6, type: "watch", name: "ساعة جيهان الذكية - وردي أنيق", details: "تصميم عصري مميز مع واجهة رقمية تفاعلية وسوار مريح.", color: "#f472b6", tier: "gold", image: "ساعة ذكية وردية بتقنية NFC.png" },
@@ -305,9 +305,9 @@ snaptr('track', 'PAGE_VIEW');
             { id: 10, type: "watch", name: "ساعة جيهان الذكية - أزرق سماوي", details: "مظهر شبابي حيوي وعصري.", color: "#38bdf8", tier: "platinum", image: "ساعة ذكية بتقنية NFC وإضاءة زرقاء.png" }
         ];
 
-        // مسار صورة المنتج: من /images/products/ إن وُجدت، وإلا الصورة الاحتياطية
+        // مسار صورة المنتج: من /assets/images/products/ إن وُجدت، وإلا الصورة الاحتياطية
         function productImage(p) {
-            return p.image ? '/images/products/' + encodeURIComponent(p.image) : WATCH_IMG_FALLBACK;
+            return p.image ? '/assets/images/products/' + encodeURIComponent(p.image) : WATCH_IMG_FALLBACK;
         }
 
 
