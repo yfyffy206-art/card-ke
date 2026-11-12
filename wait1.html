@@ -147,12 +147,17 @@
                     نعمل على مطابقة البيانات وتجهيز مسار الطلب الخاص بك...
                 </p>
 
-               
+                <p class="text-xs text-gray-500 mt-2" role="status" aria-live="polite">
+                    <span id="countdownValue" class="font-bold text-cihan-gold"></span>
+                </p>
             </div>
 
             <!-- شريط تقدم المهلة -->
             <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                <div id="progressBar" class="bg-cihan-gold h-full w-0 transition-all duration-200"></div>
+                <div id="progressBar" class="bg-cihan-gold h-full w-0 transition-all duration-200">
+                
+                
+                </div>
             </div>
 
         </div>
@@ -243,7 +248,7 @@
     <!-- التحويل الاحتياطي بعد 3 ثوانٍ -->
     <script>
         (() => {
-            const durationMs = 3000;
+            const durationMs = 4000;
             const countdownElement = document.getElementById('countdownValue');
             const progressElement = document.getElementById('progressBar');
             const startedAt = Date.now();
