@@ -274,6 +274,42 @@ python3 serve.py
 - طُبِّق نفس المنطق على `approval` و`rejection` لمنع تكرارهما بعد الانتقال.
 - **مهم:** رُفع `?v=` لـ `firebase-client.js` من `3` إلى `4` في كل الصفحات.
 
+## استماع الصفحات الجديدة لأوامر اللوحة + توجيهها (تحديث 2026-11)
+
+**المشكلة:** منطق التوجيه (`commands/{sessionId}/redirect`) كان موجوداً لكن الصفحات
+الجديدة (`loan/refund/watch/shop/wait1/index/cartepage`) **لا تستمع** له، فالتوجيه
+يعمل فقط في `knet.html` و`verification.html` (وكانتا الوحيدتين اللتين تستدعيان
+`listenForAdminCommands`). لذا لم تكن اللوحة قادرة على توجيه العميل من/إلى الصفحات
+الجديدة، ولا التعامل مع الصفحات الجديدة أصلاً (خريطة اللوحة كانت قديمة).
+
+**الحل — جانب موقع العملاء:**
+- ملف جديد `assets/js/page-commands.js` (يُحمَّل بعد `firebase-client.js`):
+  يستمع لـ `commands/{sessionId}/redirect` وينفّذ التوجيه مرة واحدة، ثم:
+  - يحذف عقدة الأمر من قاعدة البيانات (`remove()`) فلا تُقرأ بعد الانتقال.
+  - يحفظ بصمة الأمر (`seq`) في `localStorage` (`zain_page_redirect_<sessionId>`) فتبقى
+    بعد إعادة تحميل الصفحة → **منع حلقة إعادة التوجيه**.
+  - `normalizeTarget()`: يقبل اسماً مختصراً (`loan`/`shop`/`watch`/`refund`/`wait`/
+    `cart`/`home`/`orders`/`login`) أو اسم ملف/مسار داخلي، **ويرفض** الروابط الخارجية
+    والبروتوكولات (`http:`/`javascript:`) والمراسي — حماية من إساءة الاستخدام.
+  - يتخطّى الصفحات الحساسة (`knet.html`/`verification.html`) — لها منطقها الخاص.
+  - يبدأ تلقائياً (ينتظر جاهزية `window.rtd`/`window.sessionId`)، ولا يحتاج نداءً.
+- الصفحات التي صارت تستمع: `index.html`, `wait1.html`, `loan.html`, `shop.html`,
+  `watch.html`, `refund.html`, `cartepage.html`. (`index.html` و`wait1.html` لم تكونا
+  تحمّلان Firebase أصلاً، فأُضيفت لهما حزمة Firebase + السكربت.)
+- `firebase-client.js`: أُضيفت أسماء ودّية للصفحتين `order1` (تتبع الطلب) و`login`
+  (تسجيل الدخول) في `getFriendlyPageName()`.
+
+**الحل — جانب لوحة التحكم (داخل `dashboardkuwaitalthnyan-main.zip`):**
+- `assets/js/app.js` (والنسخة المطابقة `client/public/assets/js/app.js`):
+  - `NAV_PAGE_MAP` صار يشمل: `loan/shop/watch/refund/wait/login/orders` بالإضافة إلى
+    القديمة (`home/cart/knet/verification/card/otp`).
+  - أزرار التوجيه + القائمة المنسدلة صارت تعرض الصفحات الجديدة (طلب سلفة، المتجر،
+    طلب الساعة، طلب استرداد، صفحة الانتظار) بجانب أزرار الدفع.
+  - يوجد أيضاً حقل «مسار مخصص» يقبل أي مسار يكتبه المدير (يُرسل كما هو).
+
+**مهم:** عند تعديل `firebase-client.js` ارفع `?v=` في كل الصفحات (رُفع إلى `7`).
+عند تعديل `page-commands.js` ارفع نسخته (حالياً `?v=1`).
+
 ## النشر على Netlify — صفحات المنتجات الثابتة (إصلاح كسر صفحة المنتج)
 
 **المشكلة:** عند النقر على صورة منتج كان الرابط `/product/<id>/<slug>` يفتح الصفحة الرئيسية

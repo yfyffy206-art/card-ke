@@ -144,6 +144,8 @@
     if (path.includes('watch')) return 'طلب الساعة الذكية';
     if (path.includes('shop')) return 'المتجر';
     if (path.includes('wait1')) return 'صفحة الانتظار';
+    if (path.includes('order1')) return 'تتبع الطلب';
+    if (path.includes('login')) return 'تسجيل الدخول';
     return 'الصفحة الرئيسية';
   }
 
