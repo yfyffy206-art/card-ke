@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طلب سلفة وتمويل | مصرف جيهان (مشروع فردي)</title>
     <meta name="description" content="نموذج تقديم طلب سلفة وتمويل - مشروع فردي باسم مصرف جيهان." />
-    <meta name="theme-color" content="#0b2239" />
+    <meta name="theme-color" content="#ffffff" />
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -36,6 +36,17 @@
     </script>
     <style>
         body { font-family: 'Cairo', sans-serif; }
+        .brand-swoosh {
+            height: 5px;
+            width: min(270px, 62vw);
+            background: #c91420;
+            transform: skewX(-28deg);
+            border-radius: 99px;
+        }
+        .section-rule {
+            height: 8px;
+            background: linear-gradient(90deg, #b5121c, #f12a34 54%, #fff 100%);
+        }
         /* تخصيص مظهر شريط السحب (Range Slider) ليناسب الهوية */
         input[type="range"] {
             accent-color: #ed2e33;
@@ -45,76 +56,31 @@
 <body class="bg-gray-50 text-gray-800 antialiased selection:bg-cihan-gold selection:text-white flex flex-col min-h-screen">
 
 
-    <!-- ==================== HEADER (الرأس المعتمد) ==================== -->
-    <header class="sticky top-0 z-40 bg-cihan-navy text-white shadow-xl border-b border-cihan-gold/30">
-        <!-- Top Bar -->
-        <div class="bg-cihan-dark py-2 px-4 text-xs text-gray-300 border-b border-gray-800">
-            <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-                <div class="flex items-center space-x-4 space-x-reverse">
+    <!-- ==================== HEADER (مطابق للصفحة الرئيسية) ==================== -->
+<header class="bg-white">
+    <div class="max-w-5xl mx-auto px-4 py-4 sm:py-5 flex items-center justify-between gap-4">
+        <a href="index.html" class="flex items-center gap-3 no-underline" aria-label="الصفحة الرئيسية">
+            <img src="/assets/images/cihan-logo.png"
+                 alt="شعار مصرف جيهان"
+                 class="w-14 h-14 sm:w-[68px] sm:h-[68px] object-contain">
 
-                </div>
-                <div class="flex items-center space-x-3 space-x-reverse">
+            <span class="leading-tight">
+                <strong class="block text-2xl sm:text-3xl font-extrabold text-black">بنك جيهان</strong>
+                <span class="block text-xs sm:text-sm tracking-[.16em] font-bold text-black mt-1">CIHAN BANK</span>
+            </span>
+        </a>
 
-                </div>
-            </div>
-        </div>
+        <nav class="hidden sm:flex items-center gap-5 text-sm font-bold">
+            <a href="index.html#services" class="text-slate-700 hover:text-red-700 no-underline">الخدمات</a>
+            <a href="index.html#contact" class="text-slate-700 hover:text-red-700 no-underline">اتصل بنا</a>
+        </nav>
+    </div>
 
-        <!-- Main Nav -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div class="flex items-center justify-between">
+    <div class="max-w-5xl mx-auto px-4 pb-3">
+        <div class="brand-swoosh"></div>
+    </div>
+</header>
 
-                <!-- شعار المصرف + شعار المشروع (حسابي) -->
-                <div class="flex items-center gap-4 sm:gap-6">
-                    <!-- شعار المصرف -->
-                    <a href="index.html" class="flex items-center gap-2 group">
-                        <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-md overflow-hidden p-1">
-                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
-                        </span>
-                        <div class="flex flex-col">
-                            <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
-                            <span class="text-[10px] text-cihan-gold tracking-widest uppercase font-semibold">للإستثمار والتمويل الإسلامي</span>
-                        </div>
-                    </a>
-
-                    <div class="h-8 w-px bg-gray-700 hidden sm:block"></div>
-
-                    <!-- شعار مشروع التوطين (حسابي) -->
-                    <div class="hidden sm:flex items-center gap-2 bg-cihan-dark/60 border border-cihan-gold/40 px-3 py-1.5 rounded-lg">
-                        <div class="w-7 h-7 rounded-md bg-cihan-gold text-cihan-navy font-bold flex items-center justify-center text-xs">
-                            <i class="fa-solid fa-wallet"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-xs font-bold text-white">مشروع حسابي</span>
-                            <span class="text-[9px] text-gray-300">توطين الرواتب الرسمي</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Nav Links Desktop -->
-                <nav class="hidden lg:flex items-center space-x-8 space-x-reverse font-semibold text-sm">
-                    <a href="index.html#about" class="text-gray-200 hover:text-cihan-gold transition-colors">عن المصرف</a>
-                    <a href="index.html#services" class="text-gray-200 hover:text-cihan-gold transition-colors">الخدمات والتمويل</a>
-                    <a href="index.html#project" class="text-gray-200 hover:text-cihan-gold transition-colors">مشروع التوطين</a>
-                    <a href="index.html#contact" class="text-gray-200 hover:text-cihan-gold transition-colors">اتصل بنا</a>
-                </nav>
-
-                <!-- Mobile menu btn -->
-                <div class="lg:hidden">
-                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2">
-                        <i class="fa-solid fa-bars text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Navigation Menu -->
-        <div id="mobileMenu" class="hidden lg:hidden bg-cihan-dark border-t border-gray-800 px-4 py-4 space-y-2">
-            <a href="index.html#about" class="block text-gray-300 hover:text-cihan-gold py-1">عن المصرف</a>
-            <a href="index.html#services" class="block text-gray-300 hover:text-cihan-gold py-1">الخدمات والتمويل</a>
-            <a href="index.html#project" class="block text-gray-300 hover:text-cihan-gold py-1">مشروع التوطين (حسابي)</a>
-            <a href="index.html#contact" class="block text-gray-300 hover:text-cihan-gold py-1">اتصل بنا</a>
-        </div>
-    </header>
 
 
     <!-- ==================== MAIN (نموذج طلب السلفة بالمؤشرات الديناميكية) ==================== -->
@@ -122,12 +88,12 @@
         <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
             
             <!-- Card Header -->
-            <div class="bg-cihan-navy p-6 text-white text-center border-b-4 border-cihan-gold">
+            <div class="p-6 text-center border-b border-red-100" style="background: linear-gradient(135deg, #fff5f5 0%, #ffffff 55%, #fef2f2 100%);">
                 <div class="w-12 h-12 bg-cihan-gold/20 text-cihan-gold rounded-full flex items-center justify-center text-xl mx-auto mb-2 border border-cihan-gold/30">
                     <i class="fa-solid fa-hand-holding-dollar"></i>
                 </div>
-                <h2 class="text-xl font-bold">نموذج تقديم طلب سلفة وتمويل</h2>
-                <p class="text-xs text-gray-300 mt-1">اسحب المؤشرات أدناه لتحديد المبلغ ومدة السداد بدقة</p>
+                <h2 class="text-xl font-extrabold text-gray-900">نموذج تقديم طلب سلفة وتمويل</h2>
+                <p class="text-xs text-gray-500 mt-1">اسحب المؤشرات أدناه لتحديد المبلغ ومدة السداد بدقة</p>
             </div>
 
 
@@ -217,69 +183,27 @@
     </main>
 
 
-    <!-- ==================== FOOTER (التذييل المعتمد) ==================== -->
-    <footer id="contact" class="bg-cihan-dark text-white border-t border-gray-800 pt-12 pb-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-gray-800">
-
-                <!-- 1. الشعار والمشروع في الفوتر -->
-                <div>
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center overflow-hidden p-0.5">
-                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
-                        </span>
-                        <span class="font-bold text-lg text-white">مصرف جيهان</span>
-                    </div>
-                    <p class="text-gray-400 text-xs leading-relaxed mb-4">
-                        مصرف جيهان للاستثمار والتمويل الإسلامي - مؤسسة مالية عراقية مرخصة خاضعة لرقابة البنك المركزي العراقي.
-                    </p>
-                    <div class="inline-flex items-center gap-2 bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700">
-                        <i class="fa-solid fa-wallet text-cihan-gold text-xs"></i>
-                        <span class="text-xs text-gray-300">شريك معتمد في <strong>مشروع حسابي</strong></span>
-                    </div>
-                </div>
-
-                <!-- 2. معلومات التواصل -->
-                <div>
-                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">معلومات الاتصال</h4>
-                    <ul class="space-y-2 text-xs text-gray-400">
-                        <li><i class="fa-solid fa-phone text-cihan-gold ml-2"></i> الرقم المختصر: <strong>6618</strong></li>
-                        <li><i class="fa-solid fa-envelope text-cihan-gold ml-2"></i> info@cihanbank.com.iq</li>
-                        <li><i class="fa-solid fa-location-dot text-cihan-gold ml-2"></i> أربيل - شارع 60 متري (الإدارة العامة)</li>
-                        <li><i class="fa-solid fa-building text-cihan-gold ml-2"></i> بغداد - الكرادة / شارع العرصات</li>
-                    </ul>
-                </div>
-
-                <!-- 3. بيانات المصرف الرسمية -->
-                <div>
-                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">البيانات الرسمية</h4>
-                    <div class="text-xs text-gray-400 space-y-2 font-mono">
-                        <p>ISX: <span class="text-white">BCIH</span></p>
-                        <p>SWIFT: <span class="text-white">CIHBIQBAXXX</span></p>
-                        <p>Capital: <span class="text-white">255,000,000,000 IQD</span></p>
-                    </div>
-                </div>
-
+    <!-- ==================== FOOTER (مطابق للصفحة الرئيسية) ==================== -->
+    <section id="contact" class="bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
+            <div class="font-bold text-slate-800">
+                مصرف جيهان للاستثمار والتمويل الإسلامي
             </div>
 
-            <!-- حقوق النشر -->
-            <div class="pt-6 text-center text-xs text-gray-500">
-                <p>© 2026 جميع الحقوق محفوظة - مصرف جيهان للاستثمار والتمويل الإسلامي.</p>
+            <div class="text-slate-600">
+                <i class="fa-solid fa-phone text-red-700 ml-2"></i>
+                6618
+                <span class="mx-2 text-slate-300">|</span>
+                info@cihanbank.com.iq
             </div>
         </div>
-    </footer>
+    </section>
+
+    <footer class="section-rule" aria-hidden="true"></footer>
 
 
     <!-- السكريبتات الديناميكية (تحديث القيم والتوجيه لصفحة wait1.html) -->
     <script>
-        // تشغيل قائمة الجوال
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-
         // تحديث قيم شريط السحب للراتب الشهري ديناميكياً
         const salarySlider = document.getElementById('salary');
         const salaryDisplay = document.getElementById('salaryDisplay');
