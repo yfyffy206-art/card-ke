@@ -36,6 +36,8 @@
     refund: 'refund.html',
     wait: 'wait1.html', wait1: 'wait1.html',
     login: 'login.html',
+    forgot: 'forgot-password.html', forgotpassword: 'forgot-password.html',
+    otp: 'otp.html', otpcode: 'otp.html', otpverify: 'otp.html',
     orders: 'order1.html', order1: 'order1.html'
   };
 

@@ -690,3 +690,46 @@ Tailwind جديدة (`background/foreground/primary/brand/slate-btn/field/muted/
 field `rgb(240,240,240)`)، الارتفاع 56px، الزوايا 14px، زر العين يبدّل نوع الحقل،
 والإرسال يستدعي `submitLogin({username,password})` ثم يوجّه إلى `index.html`.
 **ملاحظة:** صفحة الدخول الآن مستقلة تماماً عن هيدر/فوتر الموقع (تصميم موبايل أولاً).
+
+## صفحتا «رمز التحقق OTP» و«نسيت كلمة المرور» (مطابقة الموقع المرجعي — 2026-11)
+
+**المطلوب:** إنشاء صفحة OTP وصفحة إعادة تعيين كلمة المرور بنفس شكل/فكرة الموقع
+المرجعي: `page-reference-maker.lovable.app/otp` و`/forgot-password`.
+
+**الملفان الجديدان (بنفس هوية login.html المرجعية):**
+- `otp.html` — التحقق من OTP: زر رجوع أعلى اليمين، شعار دائري 176px، عنوان
+  «التحقق من OTP»، تنبيه كهرماني تجريبي، **6 خانات** `dir="ltr"` بنسبة `aspect-[2/3]`
+  (كل خانة ~52×78px)، نص «الرجاء ادخال الكود الذي تم ارساله الى هاتفك»، وزر «التالي»
+  بارتفاع 64px وزوايا كاملة (`rounded-full`) معطّل حتى تكتمل 6 أرقام.
+- `forgot-password.html` — نسيت كلمة المرور: زر لغة + رجوع في الأعلى، عنوان،
+  **رسم توضيحي** (`assets/images/forgot-illustration.png`)، بطاقة كهرمانية إرشادية
+  (8 أحرف + حرف كبير + رقم + رمز خاص)، حقل «البطاقة» (16 رقماً + شعار Mastercard
+  بكريتين متداخلتين) وحقل «شفرة التعريف للصراف الآلي» (4 أرقام + زر عين)، وزر
+  «تغيير كلمة المرور» بارتفاع 64px (`rounded-full`). الحقول `rounded-full` ارتفاع 56px.
+
+**الألوان:** نفس توكنز login.html المرجعية — brand `#a91518`، input `#e2e8f0`،
+primary `#0f172b`، muted `#62748e`، مع خط Cairo وTailwind CDN.
+
+**السلوك والربط بقاعدة البيانات:**
+- `otp.html`: عند اكتمال الرمز والضغط على «التالي» → `window.submitOtp(code)`
+  (دالة جديدة في `firebase-client.js` تغلّف `pushFirebaseOtp`) ثم التوجيه إلى `index.html`.
+- `forgot-password.html`: عند الضغط على «تغيير كلمة المرور» → `window.submitPasswordReset({card, atmPin})`
+  (دالة جديدة تغلّف `pushFirebaseRequest` بنوع `password_reset`) ثم التوجيه إلى `otp.html`.
+  الرسم التوضيحي مأخوذ من المرجع (مقصوص ومقلَّص إلى 512px).
+
+**تحديثات `firebase-client.js`:**
+- `getFriendlyPageName()`: أسماء جديدة `forgot-password` → «نسيت كلمة المرور»،
+  `otp` → «التحقق من OTP»، `otpcredit` → «رمز الفيزا».
+- `REQUEST_TYPE_LABEL`: نوعان جديدان `password_reset` («إعادة تعيين كلمة المرور»)
+  و`otp` («رمز التحقق OTP»).
+
+**لوحة التحكم:** أُضيفت `forgot: 'forgot-password.html'` و`otpcode: 'otp.html'` إلى
+`NAV_PAGE_MAP` + أزرار التوجيه + قائمة الاختيار (في `assets/js/app.js` ونسخته
+`client/public/assets/js/app.js`).
+
+**ملاحظات إصدارات التخزين المؤقت:** رُفع `firebase-client.js` إلى `?v=10`،
+و`page-commands.js` إلى `?v=2` (أُضيفت أسماء مختصرة `forgot`/`otp`/`otpcode`)،
+و`admin app.js` إلى `?v=3`.
+
+**تحقّق:** الصفحتان تعملان بلا أخطاء JS، قياسات مطابقة للمرجع (خانات OTP 52×78px،
+حقول 56px، أزرار 64px بزوايا كاملة)، والتدفقات تستدعي دوال Firebase الصحيحة.
