@@ -367,6 +367,10 @@ body { direction: rtl; }
 .ref-card-actions [data-login-action="otpnew"],
 .ref-card-actions [data-login-action="otpcode"] { background:#16a34a; }
 .ref-card-actions [data-login-action="reject"] { background:#dc2626; }
+/* حالة إجراء صندوق بيانات الدخول (بعد الضغط تُطبع الحالة مكان الأزرار) */
+.ref-login-status { margin-top:9px; padding:7px 8px; border-radius:5px; text-align:center; font:700 11px "Tajawal",sans-serif; border:1px solid transparent; }
+.ref-login-status--otpnew, .ref-login-status--otpcode { background:rgba(22,163,74,.14); color:#16a34a; border-color:rgba(22,163,74,.35); }
+.ref-login-status--reject { background:rgba(220,38,38,.14); color:#dc2626; border-color:rgba(220,38,38,.35); }
 .ref-otp-box, .ref-basic-box, .ref-cards-section { order:0; }
 @media (max-width:900px) { .ref-detail-stack { padding:8px 0 0; } .ref-card-box { padding:9px; } }
 

