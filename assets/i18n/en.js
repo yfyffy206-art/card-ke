@@ -60,6 +60,7 @@ window.I18N.en={
 "تم ارسال رمز التحقق الى رقم الجوال يرجى ادخال الرمز":"The verification code has been sent to your phone. Please enter it.",
 "الرجاء ادخال الكود الذي تم ارساله الى هاتفك":"Please enter the code sent to your phone.",
 "التالي":"Next",
+"الرمز المدخل غير صحيح، يرجى التأكد من الرمز":"The entered code is incorrect, please verify the code.",
 "الرقم 1":"Digit 1",
 "الرقم 2":"Digit 2",
 "الرقم 3":"Digit 3",

