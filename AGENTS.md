@@ -808,3 +808,33 @@ primary `#0f172b`، muted `#62748e`، مع خط Cairo وTailwind CDN.
 wait1/cartepage/login/forgot-password/otp)، وبلا حلقة إعادة تحميل، وبتوجيه متتالٍ.
 
 **مهم:** رُفعت نسخة `page-commands.js` إلى `?v=3` في كل الصفحات التي تحمّله.
+
+## إصلاح صورة المعاينة (og:image) + وسوم المشاركة
+
+**المشكلة:** عند مشاركة رابط موقع العملاء على واتساب/فيسبوك/تلغرام لا تظهر صورة
+معاينة (أو تظهر بطاقة بلا صورة).
+
+**الأسباب (متراكبة):**
+1. `index.html` كان يشير إلى صورة على ويكيبيديا (`upload.wikimedia.org/...`) وهي
+   **محذوفة** → HTTP 404 «File not found» (متحقَّق عبر API ويكيبيديا: `"missing"`).
+   الاعتماد على خدمة خارجية يجعل الصورة تنكسر عند حذفها/تغيير مسارها.
+2. `index.html` كان **بلا وسم `<title>` إطلاقاً** — والعنوان مطلوب لعرض البطاقة.
+3. نصوص OG كانت **بالكردية** (`og:locale=ku_IQ`) بينما الموقع عربي.
+4. `og:url` كان نائباً غير مستبدل (`https://YOUR-DOMAIN.com/`) — لأن `serve.py`
+   يستبدل `althenayanfarms.app` فقط.
+5. صفحات `loan/shop/watch/refund/wait1` كانت **بلا أي وسوم OG** إطلاقاً.
+
+**الحل:**
+- صورة معاينة جديدة **محلية** `assets/images/og-share.png` (1200×630) بهوية المصرف
+  (شعار جيهان + الاسم + شارات الخدمات + شريط تواصل)، مولّدة عبر Playwright + خط Cairo
+  لتشكيل العربية الصحيح — بدل الاعتماد على ويكيبيديا.
+- `index.html`: `<title>` + `description` + `canonical` + أيقونة، وإعادة كتابة
+  OG/Twitter بالعربية (`ar_IQ`) مع `og:image:width/height`.
+- `loan/shop/watch/refund/wait1`: وسوم OG/Twitter كاملة (عنوان + وصف + صورة لكل صفحة).
+- كل الروابط تستخدم النطاق الافتراضي `https://althenayanfarms.app` الذي يستبدله
+  `serve.py` بنطاق الطلب الفعلي من ترويسة `Host` — فتعمل على Railway/Netlify/نطاق
+  مخصّص بلا تعديل. (متحقَّق: المنشور يعرض نطاق Railway.)
+
+**مهم:** إن غيّرت `og-share.png` أبقِه 1200×630 (نسبة 1.91:1) وتأكد من التزامه في Git
+لينتشر. الصورة مستخدمة في `index.html` و`loan/shop/watch/refund/wait1` و`cartepage.html`
+و`prices.html` و`product_page.py` (صفحات المنتجات).
