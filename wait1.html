@@ -2,6 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- i18n: تحديد اللغة (الافتراضي السورانية) قبل الرسم لمنع الوميض -->
+    <script src="/assets/i18n/i18n-init.js"></script>
+    <link rel="stylesheet" href="/assets/i18n/i18n.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>جاري معالجة الطلب | مصرف جيهان (مشروع فردي)</title>
     <meta name="description" content="صفحة الانتظار ومعالجة الطلبات - مشروع فردي باسم مصرف جيهان." />
@@ -15,6 +19,7 @@
 
     <!-- Cairo Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -41,6 +46,11 @@
         body {
             font-family: 'Cairo', sans-serif;
         }
+    </style>
+<style>
+        /* خط كوردي (سورانی) يغطي الحروف الخاصة: ڕ ڵ ۆ ێ گ چ پ ژ */
+        html[lang="ckb"] body { font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif; }
+        html[lang="en"] body { font-family: 'Cairo', 'Segoe UI', sans-serif; }
     </style>
 </head>
 
@@ -104,11 +114,14 @@
                     <a href="index.html#contact" class="text-gray-200 hover:text-cihan-gold transition-colors">اتصل بنا</a>
                 </nav>
 
-                <!-- زر قائمة الجوال -->
-                <div class="lg:hidden">
-                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2" aria-label="فتح القائمة">
-                        <i class="fa-solid fa-bars text-2xl"></i>
-                    </button>
+                <div class="flex items-center gap-2">
+                    <div data-lang-switcher></div>
+                    <!-- زر قائمة الجوال -->
+                    <div class="lg:hidden">
+                        <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2" aria-label="فتح القائمة">
+                            <i class="fa-solid fa-bars text-2xl"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -277,5 +290,11 @@
             }, { once: true });
         })();
     </script>
+    <!-- i18n: القواميس + المحرّك + زر تبديل اللغة (يُطبَّق على كل الصفحات) -->
+    <script src="/assets/i18n/ar.js?v=1"></script>
+    <script src="/assets/i18n/en.js?v=1"></script>
+    <script src="/assets/i18n/ckb.js?v=1"></script>
+    <script src="/assets/i18n/i18n.js?v=1"></script>
+    <script src="/assets/js/lang-switcher.js?v=1"></script>
 </body>
 </html>

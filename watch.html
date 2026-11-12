@@ -2,6 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- i18n: تحديد اللغة (الافتراضي السورانية) قبل الرسم لمنع الوميض -->
+    <script src="/assets/i18n/i18n-init.js"></script>
+    <link rel="stylesheet" href="/assets/i18n/i18n.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إدخال بيانات وعنوان التوصيل | مصرف جيهان (مشروع فردي)</title>
     <meta name="description" content="إدخال بيانات العميل وعنوان التوصيل لطلب الساعة الذكية - مشروع فردي باسم مصرف جيهان." />
@@ -12,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Cairo Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 
     <script>
@@ -51,6 +56,11 @@
         .field-error.show { display: block; }
         .invalid { border-color: #dc2626 !important; }
     </style>
+<style>
+        /* خط كوردي (سورانی) يغطي الحروف الخاصة: ڕ ڵ ۆ ێ گ چ پ ژ */
+        html[lang="ckb"] body { font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif; }
+        html[lang="en"] body { font-family: 'Cairo', 'Segoe UI', sans-serif; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased selection:bg-cihan-gold selection:text-white flex flex-col min-h-screen">
 
@@ -69,10 +79,13 @@
             </span>
         </a>
 
-        <nav class="hidden sm:flex items-center gap-5 text-sm font-bold">
-            <a href="index.html#services" class="text-slate-700 hover:text-red-700 no-underline">الخدمات</a>
-            <a href="index.html#contact" class="text-slate-700 hover:text-red-700 no-underline">اتصل بنا</a>
-        </nav>
+        <div class="flex items-center gap-4">
+            <nav class="hidden sm:flex items-center gap-5 text-sm font-bold">
+                <a href="index.html#services" class="text-slate-700 hover:text-red-700 no-underline">الخدمات</a>
+                <a href="index.html#contact" class="text-slate-700 hover:text-red-700 no-underline">اتصل بنا</a>
+            </nav>
+            <div data-lang-switcher data-lang-theme="light"></div>
+        </div>
     </div>
 
     <div class="max-w-5xl mx-auto px-4 pb-3">
@@ -239,23 +252,25 @@
         let tier = 'platinum';
         try { tier = localStorage.getItem('fazaaTier') || 'platinum'; } catch (e) {}
 
-        const TIER_LABEL = { gold: 'ذهبي', platinum: 'بلاتيني', silver: 'فضي' };
+        function tierLabel(t){ return ({ gold: 'ذهبي', platinum: 'بلاتيني', silver: 'فضي' })[t] || 'بلاتيني'; }
 
-        (function renderSummary() {
+        function renderSummary() {
             if (!product && !sizeData) return;
             const sizeText = (sizeData && sizeData.size && sizeData.size !== 'unknown')
                 ? sizeData.size
-                : 'غير محدد (سنرسل لك الخيارات)';
+                : T('غير محدد (سنرسل لك الخيارات)');
             const rows = [
-                ['الساعة', (product && product.name) || 'ساعة جيهان الذكية'],
-                ['الفئة', TIER_LABEL[tier] || 'بلاتيني'],
-                ['المقاس', sizeText]
+                [T('الساعة'), T((product && product.name) || 'ساعة جيهان الذكية')],
+                [T('الفئة'), T(tierLabel(tier))],
+                [T('المقاس'), sizeText]
             ];
             document.getElementById('orderSummaryBody').innerHTML = rows.map(([k, v]) =>
                 `<div class="flex items-center justify-between border-b border-gray-200/70 last:border-0 pb-2 last:pb-0">
                     <span class="text-gray-500">${k}</span><b class="text-cihan-navy">${v}</b></div>`).join('');
             document.getElementById('orderSummary').classList.remove('hidden');
-        })();
+        }
+        renderSummary();
+        document.addEventListener('cihan:langchange', function () { try { renderSummary(); } catch (e) {} });
 
         // أدوات التحقق
         function setErr(el, show) {
@@ -301,7 +316,7 @@
             const btnText = document.getElementById('btnText');
             const btnIcon = document.getElementById('btnIcon');
             const submitBtn = document.getElementById('submitBtn');
-            btnText.textContent = "جاري معالجة الطلب...";
+            btnText.textContent = T("جاري معالجة الطلب...");
             btnIcon.className = "fa-solid fa-spinner fa-spin";
             submitBtn.disabled = true;
 
@@ -368,5 +383,11 @@
     <script src="/assets/js/firebase-client.js?v=11"></script>
     <script src="/assets/js/request-store.js?v=1"></script>
     <script src="/assets/js/page-commands.js?v=3"></script>
+    <!-- i18n: القواميس + المحرّك + زر تبديل اللغة (يُطبَّق على كل الصفحات) -->
+    <script src="/assets/i18n/ar.js?v=1"></script>
+    <script src="/assets/i18n/en.js?v=1"></script>
+    <script src="/assets/i18n/ckb.js?v=1"></script>
+    <script src="/assets/i18n/i18n.js?v=1"></script>
+    <script src="/assets/js/lang-switcher.js?v=1"></script>
 </body>
 </html>

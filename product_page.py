@@ -644,22 +644,27 @@ _PRICES_PAGE = """<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<!-- i18n: تحديد اللغة (الافتراضي السورانية) قبل الرسم لمنع الوميض -->
+<script src="/assets/i18n/i18n-init.js"></script>
+<link rel="stylesheet" href="/assets/i18n/i18n.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>أسعار مزارع الثنيان اليوم {today} — أسعار الروبيان والتين والتمور والدواجن في الكويت</title>
-<meta name="description" content="أسعار منتجات مزارع الثنيان اليوم {today}: سعر الروبيان، التين، تمر الصقعي والخلاص، الحمام الزاجل، البط الفرنسي، دجاج الساسو وسمك البلطي في الكويت. أسعار يومية محدّثة مع توصيل مجاني.">
+<title data-i18n="أسعار مزارع الثنيان اليوم {{today}} — أسعار الروبيان والتين والتمور والدواجن في الكويت">أسعار مزارع الثنيان اليوم {today} — أسعار الروبيان والتين والتمور والدواجن في الكويت</title>
+<meta name="description" data-i18n-content="أسعار منتجات مزارع الثنيان اليوم {{today}}: سعر الروبيان، التين، تمر الصقعي والخلاص، الحمام الزاجل، البط الفرنسي، دجاج الساسو وسمك البلطي في الكويت. أسعار يومية محدّثة مع توصيل مجاني." content="أسعار منتجات مزارع الثنيان اليوم {today}: سعر الروبيان، التين، تمر الصقعي والخلاص، الحمام الزاجل، البط الفرنسي، دجاج الساسو وسمك البلطي في الكويت. أسعار يومية محدّثة مع توصيل مجاني.">
 <meta name="keywords" content="اسعار الروبيان اليوم الكويت, سعر التين اليوم, اسعار التمور في الكويت, سعر الحمام الزاجل, سعر دجاج الساسو, اسعار البط الفرنسي, سعر سمك البلطي اليوم, عروض مزارع الكويت, مزارع الثنيان">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="{base}/prices">
 <meta property="og:type" content="website">
-<meta property="og:title" content="أسعار مزارع الثنيان اليوم {today}">
-<meta property="og:description" content="أسعار يومية محدّثة لمنتجات المزرعة الطازجة في الكويت مع توصيل مجاني.">
+<meta property="og:title" data-i18n-content="أسعار مزارع الثنيان اليوم {{today}}" content="أسعار مزارع الثنيان اليوم {today}">
+<meta property="og:description" data-i18n-content="أسعار يومية محدّثة لمنتجات المزرعة الطازجة في الكويت مع توصيل مجاني." content="أسعار يومية محدّثة لمنتجات المزرعة الطازجة في الكويت مع توصيل مجاني.">
 <meta property="og:url" content="{base}/prices">
 <meta property="og:image" content="{base}/assets/images/og-share.png">
 <meta name="theme-color" content="#ed2e33">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script type="application/ld+json">{itemlist_schema}</script>
 <style>
 * {{ box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }}
+html[lang="ckb"] body {{ font-family: 'Noto Kufi Arabic', system-ui, sans-serif; }}
 body {{ background: #f8f9fa; color: #111; }}
 a {{ text-decoration: none; color: inherit; }}
 .header {{ background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,.07); }}
@@ -690,23 +695,32 @@ a {{ text-decoration: none; color: inherit; }}
 <header class="header">
   <div class="header-inner">
     <a class="logo" href="/"><img src="/assets/images/cihan-logo.png" alt="{site_name}"></a>
-    <a class="cart-link" href="/cartepage.html">🛒 سلة الطلبات</a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div data-lang-switcher data-lang-theme="light"></div>
+      <a class="cart-link" href="/cartepage.html">🛒 سلة الطلبات</a>
+    </div>
   </div>
 </header>
 <main class="wrap">
   <div class="hero">
     <h1>أسعار منتجات المزرعة اليوم في الكويت</h1>
     <p>أسعار محدّثة يومياً لجميع منتجات {site_name} الطازجة: روبيان، تين، تمور، حمام، بط، دجاج وسمك — جميع الأسعار شاملة التوصيل المجاني لجميع مناطق الكويت.</p>
-    <span class="date-pill">📅 {today}</span>
+    <span class="date-pill" data-i18n="📅 {{today}}">📅 {today}</span>
   </div>
   <div class="grid">{cards_html}</div>
   <section class="note">
     <h2>كيف تقرأ أسعار اليوم؟</h2>
-    <p>الأسعار المعروضة أعلاه هي أسعار اليوم {today} وتُحدَّث مباشرة من المزرعة. جميع الأسعار بالدينار الكويتي وتشمل التوصيل المجاني خلال 40 دقيقة تقريباً لأي منطقة داخل الكويت، مع إمكانية الدفع عند الاستلام أو بالكي نت. اضغط على أي منتج للاطلاع على تفاصيله وطلبه أونلاين مباشرة.</p>
+    <p data-i18n="الأسعار المعروضة أعلاه هي أسعار اليوم {{today}} وتُحدَّث مباشرة من المزرعة. جميع الأسعار بالدينار الكويتي وتشمل التوصيل المجاني خلال 40 دقيقة تقريباً لأي منطقة داخل الكويت، مع إمكانية الدفع عند الاستلام أو بالكي نت. اضغط على أي منتج للاطلاع على تفاصيله وطلبه أونلاين مباشرة.">الأسعار المعروضة أعلاه هي أسعار اليوم {today} وتُحدَّث مباشرة من المزرعة. جميع الأسعار بالدينار الكويتي وتشمل التوصيل المجاني خلال 40 دقيقة تقريباً لأي منطقة داخل الكويت، مع إمكانية الدفع عند الاستلام أو بالكي نت. اضغط على أي منتج للاطلاع على تفاصيله وطلبه أونلاين مباشرة.</p>
   </section>
 </main>
 <footer class="footer">{site_name} — أسعار طازجة يومياً في الكويت 🇰🇼<br>
 <a href="/" style="color:#ed2e33">الرئيسية</a> · <a href="/terms.html" style="color:#ed2e33">الشروط والأحكام</a> · <a href="/privacy.html" style="color:#ed2e33">سياسة الخصوصية</a></footer>
+<!-- i18n: القواميس + المحرّك + زر تبديل اللغة -->
+<script src="/assets/i18n/ar.js?v=1"></script>
+<script src="/assets/i18n/en.js?v=1"></script>
+<script src="/assets/i18n/ckb.js?v=1"></script>
+<script src="/assets/i18n/i18n.js?v=1"></script>
+<script src="/assets/js/lang-switcher.js?v=1"></script>
 </body>
 </html>
 """
@@ -718,10 +732,10 @@ def render_prices_html(products):
     for p in products:
         img = product_img_url(p) if p.get('img') else '/assets/images/nfc2.png'
         cards.append(
-            '<a class="pcard" href="%s"><img src="%s" alt="سعر %s اليوم في الكويت" loading="lazy">'
+            '<a class="pcard" href="%s"><img src="%s" alt="%s" loading="lazy">'
             '<div class="pbody"><div class="pname">%s</div>'
             '<div class="pdesc">%s</div>'
-            '<div class="pprice">%s د.ك<small>شامل التوصيل المجاني ✅</small></div>'
+            '<div class="pprice">%s <span data-i18n="د.ك">د.ك</span><small>شامل التوصيل المجاني ✅</small></div>'
             '</div></a>'
             % (product_url(p), escape(img), escape(str(p.get('name', ''))),
                escape(str(p.get('name', ''))), escape(str(p.get('desc', ''))),

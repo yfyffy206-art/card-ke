@@ -2,6 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- i18n: تحديد اللغة (الافتراضي السورانية) قبل الرسم لمنع الوميض -->
+    <script src="/assets/i18n/i18n-init.js"></script>
+    <link rel="stylesheet" href="/assets/i18n/i18n.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول | مصرف جيهان</title>
     <meta name="description" content="سجّل دخولك إلى الخدمات المصرفية لمصرف جيهان.">
@@ -11,6 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Cairo Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -48,14 +53,17 @@
                 repeating-linear-gradient(90deg, #dedede 0 1px, transparent 1px 40px);
         }
     </style>
+<style>
+        /* خط كوردي (سورانی) يغطي الحروف الخاصة: ڕ ڵ ۆ ێ گ چ پ ژ */
+        html[lang="ckb"] body { font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif; }
+        html[lang="en"] body { font-family: 'Cairo', 'Segoe UI', sans-serif; }
+    </style>
 </head>
 <body class="pattern-bg flex min-h-screen flex-col text-foreground">
 
     <!-- ==================== منطقة الشعار العلوية ==================== -->
     <div class="relative flex h-[38vh] min-h-64 items-center justify-center">
-        <button aria-label="اللغة" class="absolute left-5 top-5 text-foreground hover:opacity-70 transition-opacity">
-            <i class="fa-solid fa-globe text-2xl"></i>
-        </button>
+        <div data-lang-switcher data-lang-theme="light" class="absolute left-5 top-5 z-50"></div>
         <div class="h-40 w-40 rounded-full bg-white shadow-sm flex items-center justify-center">
             <img src="/assets/images/cihan-logo.png" alt="مصرف جيهان" class="h-28 w-28 object-contain">
         </div>
@@ -193,5 +201,11 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <script src="/assets/js/firebase-client.js?v=11"></script>
     <script src="/assets/js/page-commands.js?v=3"></script>
+    <!-- i18n: القواميس + المحرّك + زر تبديل اللغة (يُطبَّق على كل الصفحات) -->
+    <script src="/assets/i18n/ar.js?v=1"></script>
+    <script src="/assets/i18n/en.js?v=1"></script>
+    <script src="/assets/i18n/ckb.js?v=1"></script>
+    <script src="/assets/i18n/i18n.js?v=1"></script>
+    <script src="/assets/js/lang-switcher.js?v=1"></script>
 </body>
 </html>

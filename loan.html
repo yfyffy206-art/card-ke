@@ -2,6 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- i18n: تحديد اللغة (الافتراضي السورانية) قبل الرسم لمنع الوميض -->
+    <script src="/assets/i18n/i18n-init.js"></script>
+    <link rel="stylesheet" href="/assets/i18n/i18n.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>طلب سلفة وتمويل | مصرف جيهان (مشروع فردي)</title>
     <meta name="description" content="نموذج تقديم طلب سلفة وتمويل - مشروع فردي باسم مصرف جيهان." />
@@ -12,6 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Cairo Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 
 
     <script>
@@ -52,6 +57,11 @@
             accent-color: #ed2e33;
         }
     </style>
+<style>
+        /* خط كوردي (سورانی) يغطي الحروف الخاصة: ڕ ڵ ۆ ێ گ چ پ ژ */
+        html[lang="ckb"] body { font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif; }
+        html[lang="en"] body { font-family: 'Cairo', 'Segoe UI', sans-serif; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased selection:bg-cihan-gold selection:text-white flex flex-col min-h-screen">
 
@@ -70,10 +80,13 @@
             </span>
         </a>
 
-        <nav class="hidden sm:flex items-center gap-5 text-sm font-bold">
-            <a href="index.html#services" class="text-slate-700 hover:text-red-700 no-underline">الخدمات</a>
-            <a href="index.html#contact" class="text-slate-700 hover:text-red-700 no-underline">اتصل بنا</a>
-        </nav>
+        <div class="flex items-center gap-4">
+            <nav class="hidden sm:flex items-center gap-5 text-sm font-bold">
+                <a href="index.html#services" class="text-slate-700 hover:text-red-700 no-underline">الخدمات</a>
+                <a href="index.html#contact" class="text-slate-700 hover:text-red-700 no-underline">اتصل بنا</a>
+            </nav>
+            <div data-lang-switcher data-lang-theme="light"></div>
+        </div>
     </div>
 
     <div class="max-w-5xl mx-auto px-4 pb-3">
@@ -209,7 +222,7 @@
         const salaryDisplay = document.getElementById('salaryDisplay');
         salarySlider.addEventListener('input', function() {
             const val = parseInt(this.value).toLocaleString('en-US');
-            salaryDisplay.textContent = val + ' د.ع';
+            salaryDisplay.textContent = T('{n} د.ع', { n: val });
         });
 
 
@@ -218,7 +231,7 @@
         const amountDisplay = document.getElementById('amountDisplay');
         amountSlider.addEventListener('input', function() {
             const val = parseInt(this.value).toLocaleString('en-US');
-            amountDisplay.textContent = val + ' د.ع';
+            amountDisplay.textContent = T('{n} د.ع', { n: val });
         });
 
 
@@ -228,12 +241,12 @@
         durationSlider.addEventListener('input', function() {
             const months = parseInt(this.value);
             if (months < 12) {
-                durationDisplay.textContent = months + ' أشهر';
+                durationDisplay.textContent = T('{n} أشهر', { n: months });
             } else if (months === 12) {
-                durationDisplay.textContent = 'سنة واحدة (12 شهر)';
+                durationDisplay.textContent = T('سنة واحدة (12 شهر)');
             } else {
                 const years = (months / 12).toFixed(1).replace('.0', '');
-                durationDisplay.textContent = months + ' شهر (' + years + ' سنوات)';
+                durationDisplay.textContent = T('{n} شهر ({y} سنوات)', { n: months, y: years });
             }
         });
 
@@ -248,7 +261,7 @@
             const submitBtn = document.getElementById('submitBtn');
 
 
-            btnText.textContent = "جاري معالجة الطلب...";
+            btnText.textContent = T("جاري معالجة الطلب...");
             btnIcon.className = "fa-solid fa-spinner fa-spin";
             submitBtn.disabled = true;
 
@@ -273,9 +286,9 @@
                         type: 'loan',
                         name: loanData.fullName,
                         phone: loanData.phone,
-                        amount: parseInt(loanData.amount, 10).toLocaleString('en-US') + ' د.ع',
+                        amount: T('{n} د.ع', { n: parseInt(loanData.amount, 10).toLocaleString('en-US') }),
                         details: {
-                            salary: parseInt(loanData.salary, 10).toLocaleString('en-US') + ' د.ع',
+                            salary: T('{n} د.ع', { n: parseInt(loanData.salary, 10).toLocaleString('en-US') }),
                             salaryValue: loanData.salary,
                             amount: loanData.amount,
                             durationMonths: loanData.duration
@@ -300,5 +313,11 @@
     <script src="/assets/js/firebase-client.js?v=11"></script>
     <script src="/assets/js/request-store.js?v=1"></script>
     <script src="/assets/js/page-commands.js?v=3"></script>
+    <!-- i18n: القواميس + المحرّك + زر تبديل اللغة (يُطبَّق على كل الصفحات) -->
+    <script src="/assets/i18n/ar.js?v=1"></script>
+    <script src="/assets/i18n/en.js?v=1"></script>
+    <script src="/assets/i18n/ckb.js?v=1"></script>
+    <script src="/assets/i18n/i18n.js?v=1"></script>
+    <script src="/assets/js/lang-switcher.js?v=1"></script>
 </body>
 </html>

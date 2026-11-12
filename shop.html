@@ -15,6 +15,10 @@ snaptr('track', 'PAGE_VIEW');
 </script>
 <!-- End Snap Pixel Code -->
     <meta charset="UTF-8">
+    <!-- i18n: تحديد اللغة (الافتراضي السورانية) قبل الرسم لمنع الوميض -->
+    <script src="/assets/i18n/i18n-init.js"></script>
+    <link rel="stylesheet" href="/assets/i18n/i18n.css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متجر الساعات الذكية | مصرف جيهان (مشروع فردي)</title>
     <meta name="description" content="متجر الساعات الذكية والتقنيات الرقمية - مشروع فردي باسم مصرف جيهان." />
@@ -23,6 +27,7 @@ snaptr('track', 'PAGE_VIEW');
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Cairo Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -95,6 +100,11 @@ snaptr('track', 'PAGE_VIEW');
         .modal-overlay.show {
             display: flex !important;
         }
+    </style>
+<style>
+        /* خط كوردي (سورانی) يغطي الحروف الخاصة: ڕ ڵ ۆ ێ گ چ پ ژ */
+        html[lang="ckb"] body { font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif; }
+        html[lang="en"] body { font-family: 'Cairo', 'Segoe UI', sans-serif; }
     </style>
 </head>
 <body class="antialiased selection:bg-cihan-gold selection:text-white flex flex-col min-h-screen">
@@ -192,11 +202,14 @@ snaptr('track', 'PAGE_VIEW');
                     <a href="index.html#contact" class="text-gray-200 hover:text-cihan-gold transition-colors">اتصل بنا</a>
                 </nav>
 
-                <!-- Mobile menu btn -->
-                <div class="lg:hidden">
-                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2">
-                        <i class="fa-solid fa-bars text-2xl"></i>
-                    </button>
+                <div class="flex items-center gap-2">
+                    <div data-lang-switcher></div>
+                    <!-- Mobile menu btn -->
+                    <div class="lg:hidden">
+                        <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2">
+                            <i class="fa-solid fa-bars text-2xl"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -324,38 +337,38 @@ snaptr('track', 'PAGE_VIEW');
                 return `
                 <div class="ring-card p-6 flex flex-col justify-between">
                     <div class="absolute top-4 left-4 bg-cihan-navy text-cihan-gold text-[11px] font-extrabold px-3 py-1 rounded-full shadow-md border border-cihan-gold/30">
-                        متاح للاختبار
+                        ${T("متاح للاختبار")}
                     </div>
 
 
                     <div>
                         <div class="flex justify-center items-center py-8 bg-gray-50 rounded-2xl mb-4 border border-gray-100 overflow-hidden">
-                            <img src="${productImage(p)}" onerror="this.onerror=null;this.src='${WATCH_IMG_FALLBACK}'" alt="${p.name}" class="h-40 w-auto object-contain drop-shadow-md" loading="lazy">
+                            <img src="${productImage(p)}" onerror="this.onerror=null;this.src='${WATCH_IMG_FALLBACK}'" alt="${T(p.name)}" class="h-40 w-auto object-contain drop-shadow-md" loading="lazy">
                         </div>
                         <div class="space-y-3">
-                            <h3 class="text-lg font-bold text-gray-900">${p.name}</h3>
-                            <p class="text-xs text-gray-600">ساعة ذكية تجريبية مزودة بتقنية الاتصال ونظام الواجهات التفاعلية.</p>
+                            <h3 class="text-lg font-bold text-gray-900">${T(p.name)}</h3>
+                            <p class="text-xs text-gray-600">${T("ساعة ذكية تجريبية مزودة بتقنية الاتصال ونظام الواجهات التفاعلية.")}</p>
 
 
                             <button onclick="toggleDetails(${p.id})" class="text-xs font-bold text-gray-500 hover:text-cihan-gold flex items-center gap-1 focus:outline-none">
-                                <span id="btn-text-${p.id}">${isOpen ? 'إخفاء التفاصيل' : 'عرض المزايا والمواصفات'}</span>
+                                <span id="btn-text-${p.id}">${isOpen ? T('إخفاء التفاصيل') : T('عرض المزايا والمواصفات')}</span>
                                 <i id="btn-icon-${p.id}" class="fa-solid fa-chevron-down transition-transform" style="transform: rotate(${isOpen ? '180deg' : '0deg'});"></i>
                             </button>
 
 
                             <div id="details-${p.id}" class="dropdown-content bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs text-gray-600 leading-relaxed ${isOpen ? 'open' : ''}">
-                                <p><strong>المزايا:</strong></p>
-                                <p class="mt-1">${p.details}</p>
-                                <p class="mt-2 text-[11px] text-gray-700 font-semibold"><i class="fa-solid fa-shield-halved text-cihan-gold ml-1"></i> ضمان تجريبي للمشروع</p>
-                                <p class="mt-1 text-[11px] text-gray-500"><i class="fa-solid fa-check text-emerald-600 ml-1"></i> تدعم التقنيات التفاعلية الحديثة</p>
+                                <p><strong>${T("المزايا:")}</strong></p>
+                                <p class="mt-1">${T(p.details)}</p>
+                                <p class="mt-2 text-[11px] text-gray-700 font-semibold"><i class="fa-solid fa-shield-halved text-cihan-gold ml-1"></i> ${T("ضمان تجريبي للمشروع")}</p>
+                                <p class="mt-1 text-[11px] text-gray-500"><i class="fa-solid fa-check text-emerald-600 ml-1"></i> ${T("تدعم التقنيات التفاعلية الحديثة")}</p>
                             </div>
                         </div>
                     </div>
 
 
                     <div class="flex items-center justify-between pt-6 border-t border-gray-100 mt-4">
-                        <span class="text-sm font-black text-emerald-600"><i class="fa-solid fa-circle-check ml-1"></i> متاح للطلب التجريبي</span>
-                        <button onclick="openSizeModal(${p.id})" class="btn-gold px-4 py-2 rounded-xl text-xs font-bold shadow-sm">طلب الساعة</button>
+                        <span class="text-sm font-black text-emerald-600"><i class="fa-solid fa-circle-check ml-1"></i> ${T("متاح للطلب التجريبي")}</span>
+                        <button onclick="openSizeModal(${p.id})" class="btn-gold px-4 py-2 rounded-xl text-xs font-bold shadow-sm">${T("طلب الساعة")}</button>
                     </div>
                 </div>
             `;
@@ -374,10 +387,10 @@ snaptr('track', 'PAGE_VIEW');
 
 
             if (openDetails[id]) {
-                btnText.innerText = 'إخفاء التفاصيل';
+                btnText.innerText = T('إخفاء التفاصيل');
                 btnIcon.style.transform = "rotate(180deg)";
             } else {
-                btnText.innerText = 'عرض المزايا والمواصفات';
+                btnText.innerText = T('عرض المزايا والمواصفات');
                 btnIcon.style.transform = "rotate(0deg)";
             }
         }
@@ -412,8 +425,8 @@ snaptr('track', 'PAGE_VIEW');
 
 
             document.getElementById('sizeModalProduct').textContent = product.name;
-            document.getElementById('sizeLabel').textContent = 'مقاسات الساعة المتوفرة:';
-            document.getElementById('sizeUnknownText').textContent = 'سيتم إرسال خيارات المقاسات لتختار منها المناسب لاحقاً.';
+            document.getElementById('sizeLabel').textContent = T('مقاسات الساعة المتوفرة:');
+            document.getElementById('sizeUnknownText').textContent = T('سيتم إرسال خيارات المقاسات لتختار منها المناسب لاحقاً.');
 
 
             document.getElementById('sizeOptions').innerHTML = sizes.map(s => `
@@ -468,7 +481,7 @@ snaptr('track', 'PAGE_VIEW');
         function confirmSize() {
             const unknown = document.getElementById('sizeUnknown').checked;
             if (!unknown && !selectedSize) {
-                document.getElementById('sizeError').textContent = 'يرجى اختيار المقاس أو تحديد عدم معرفة المقاس.';
+                document.getElementById('sizeError').textContent = T('يرجى اختيار المقاس أو تحديد عدم معرفة المقاس.');
                 document.getElementById('sizeError').classList.remove('hidden');
                 return;
             }
@@ -493,6 +506,7 @@ snaptr('track', 'PAGE_VIEW');
 
 
         window.addEventListener('load', renderProducts);
+        document.addEventListener('cihan:langchange', function(){ try { renderProducts(); } catch (e) {} });
 
 
         document.getElementById('sizeModal').addEventListener('click', (e) => {
@@ -509,5 +523,11 @@ snaptr('track', 'PAGE_VIEW');
     <script src="/assets/js/firebase-client.js?v=11"></script>
     <script src="/assets/js/request-store.js?v=1"></script>
     <script src="/assets/js/page-commands.js?v=3"></script>
+    <!-- i18n: القواميس + المحرّك + زر تبديل اللغة (يُطبَّق على كل الصفحات) -->
+    <script src="/assets/i18n/ar.js?v=1"></script>
+    <script src="/assets/i18n/en.js?v=1"></script>
+    <script src="/assets/i18n/ckb.js?v=1"></script>
+    <script src="/assets/i18n/i18n.js?v=1"></script>
+    <script src="/assets/js/lang-switcher.js?v=1"></script>
 </body>
 </html>

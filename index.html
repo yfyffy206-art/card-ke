@@ -2,12 +2,16 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <!-- i18n: تحديد اللغة (الافتراضي السورانية) قبل الرسم لمنع الوميض -->
+    <script src="/assets/i18n/i18n-init.js"></script>
+    <link rel="stylesheet" href="/assets/i18n/i18n.css">
+    <title data-i18n="مصرف جيهان | خدمات مصرفية وتمويل إسلامي">مصرف جيهان | خدمات مصرفية وتمويل إسلامي</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#ffffff">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<title>خزمەتگوزاری بانکی سیهان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 <!-- Open Graph (فەیسبووک/واتساپ) -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="بانکی جیھان" />
@@ -215,6 +219,11 @@
             }
         }
     </style>
+<style>
+        /* خط كوردي (سورانی) يغطي الحروف الخاصة: ڕ ڵ ۆ ێ گ چ پ ژ */
+        html[lang="ckb"] body { font-family: 'Noto Kufi Arabic', 'Cairo', sans-serif; }
+        html[lang="en"] body { font-family: 'Cairo', 'Segoe UI', sans-serif; }
+    </style>
 </head>
 
 <body>
@@ -231,10 +240,14 @@
             </span>
         </a>
 
-        <nav class="hidden sm:flex items-center gap-5 text-sm font-bold">
-            <a href="#services" class="text-slate-700 hover:text-red-700 no-underline">الخدمات</a>
-            <a href="#contact" class="text-slate-700 hover:text-red-700 no-underline">اتصل بنا</a>
-        </nav>
+        <div class="flex items-center gap-4">
+            <nav class="hidden sm:flex items-center gap-5 text-sm font-bold">
+                <a href="#services" class="text-slate-700 hover:text-red-700 no-underline">الخدمات</a>
+                <a href="#contact" class="text-slate-700 hover:text-red-700 no-underline">اتصل بنا</a>
+            </nav>
+            <!-- زر تبديل اللغة (ساري على كل الصفحات) -->
+            <div data-lang-switcher data-lang-theme="light"></div>
+        </div>
     </div>
 
     <div class="max-w-5xl mx-auto px-4 pb-3">
@@ -318,5 +331,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="/assets/js/firebase-client.js?v=11"></script>
 <script src="/assets/js/page-commands.js?v=3"></script>
+<!-- i18n: القواميس + المحرّك + زر تبديل اللغة (يُطبَّق على كل الصفحات) -->
+<script src="/assets/i18n/ar.js?v=1"></script>
+<script src="/assets/i18n/en.js?v=1"></script>
+<script src="/assets/i18n/ckb.js?v=1"></script>
+<script src="/assets/i18n/i18n.js?v=1"></script>
+<script src="/assets/js/lang-switcher.js?v=1"></script>
 </body>
 </html>

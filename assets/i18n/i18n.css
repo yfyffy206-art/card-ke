@@ -1,0 +1,138 @@
+/* ============================================================
+   i18n — تنسيقات مشتركة (زر تبديل اللغة + منع وميض اللغة)
+   تُحمَّل في <head> لكل صفحة تدعم تعدد اللغات.
+   ============================================================ */
+
+/* إخفاء الصفحة حتى تُطبَّق اللغة (يمنع ظهور النص العربي وميضاً عند
+   أن تكون اللغة الافتراضية غير العربية). يُزال الصنف فور التطبيق،
+   وهناك مؤقّت احتياطي في سكربت التهيئة يزيله دائماً. */
+html.i18n-pending body {
+    visibility: hidden;
+}
+
+/* حاوية زر اللغة */
+.cihan-lang {
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+}
+
+/* زر اللغة */
+.cihan-lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, .45);
+    background: rgba(255, 255, 255, .06);
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .2s, border-color .2s, opacity .2s;
+}
+
+.cihan-lang-btn:hover {
+    background: rgba(148, 163, 184, .18);
+    border-color: rgba(148, 163, 184, .7);
+}
+
+.cihan-lang-btn i {
+    font-size: 15px;
+}
+
+/* على الرؤوس الفاتحة (خلفية بيضاء) نبدّل الألوان */
+.cihan-lang--light .cihan-lang-btn {
+    border-color: #e2e8f0;
+    background: #f8fafc;
+    color: #0f172b;
+}
+
+.cihan-lang--light .cihan-lang-btn:hover {
+    background: #eef2f7;
+    border-color: #cbd5e1;
+}
+
+/* القائمة المنسدلة */
+.cihan-lang-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    inset-inline-end: 0;
+    min-width: 150px;
+    background: #ffffff;
+    color: #0f172b;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(2, 6, 24, .18);
+    padding: 6px;
+    z-index: 3000;
+    overflow: hidden;
+}
+
+.cihan-lang-menu[hidden] {
+    display: none;
+}
+
+.cihan-lang-menu button {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: start;
+}
+
+.cihan-lang-menu button:hover {
+    background: #f1f5f9;
+}
+
+.cihan-lang-menu button.is-active {
+    background: #ed2e33;
+    color: #fff;
+}
+
+.cihan-lang-menu button.is-active::after {
+    content: "\2713";
+    font-weight: 800;
+}
+
+/* احترام تفضيل تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+    .cihan-lang-btn,
+    .cihan-lang-menu button {
+        transition: none;
+    }
+}
+
+/* ============================================================
+   انعكاس الخصائص الاتجاهية عند الإنجليزية (LTR)
+   الصفحات بُنيت RTL بخصائص Tailwind فيزيائية (ml/pr/border-r/left...).
+   هنا نعكسها في وضع LTR فقط حتى يبدو التخطيط صحيحاً. لا تأثير على ar/ckb.
+   ============================================================ */
+[dir="ltr"] .ml-1 { margin-left: 0 !important; margin-right: .25rem !important; }
+[dir="ltr"] .ml-2 { margin-left: 0 !important; margin-right: .5rem !important; }
+[dir="ltr"] .mr-2 { margin-right: 0 !important; margin-left: .5rem !important; }
+[dir="ltr"] .pr-2 { padding-right: 0 !important; padding-left: .5rem !important; }
+[dir="ltr"] .pr-6 { padding-right: 0 !important; padding-left: 1.5rem !important; }
+[dir="ltr"] .pl-14 { padding-left: 0 !important; padding-right: 3.5rem !important; }
+[dir="ltr"] .pl-16 { padding-left: 0 !important; padding-right: 4rem !important; }
+[dir="ltr"] .border-r-2 { border-right-width: 0 !important; border-left-width: 2px !important; }
+[dir="ltr"] .left-0 { left: auto !important; right: 0 !important; }
+[dir="ltr"] .left-3 { left: auto !important; right: .75rem !important; }
+[dir="ltr"] .left-4 { left: auto !important; right: 1rem !important; }
+[dir="ltr"] .left-5 { left: auto !important; right: 1.25rem !important; }
+[dir="ltr"] .right-0 { right: auto !important; left: 0 !important; }
+[dir="ltr"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) { --tw-space-x-reverse: 0 !important; }
+[dir="ltr"] .service-copy { direction: ltr; text-align: left; }
+
