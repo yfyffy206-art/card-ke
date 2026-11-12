@@ -332,7 +332,7 @@ _PAGE = """<!DOCTYPE html>
 <link rel="canonical" href="{canonical}">
 <link rel="alternate" hreflang="ar" href="{canonical}">
 <link rel="alternate" hreflang="x-default" href="{canonical}">
-<meta name="theme-color" content="#004d7a">
+<meta name="theme-color" content="#ed2e33">
 <meta property="og:type" content="product">
 <meta property="og:site_name" content="{site_name}">
 <meta property="og:locale" content="ar_KW">
@@ -358,27 +358,27 @@ a {{ text-decoration: none; color: inherit; }}
 .header {{ background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,.07); }}
 .header-inner {{ max-width: 1000px; margin: 0 auto; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }}
 .logo img {{ width: 110px; height: 35px; object-fit: contain; display: block; }}
-.cart-link {{ background: #004d7a; color: #fff; padding: 8px 18px; border-radius: 10px; font-size: 14px; font-weight: 700; }}
+.cart-link {{ background: #ed2e33; color: #fff; padding: 8px 18px; border-radius: 10px; font-size: 14px; font-weight: 700; }}
 .wrap {{ max-width: 1000px; margin: 0 auto; padding: 15px; }}
 .breadcrumb {{ font-size: 13px; color: #777; margin: 10px 0 18px; }}
-.breadcrumb a {{ color: #004d7a; }}
+.breadcrumb a {{ color: #ed2e33; }}
 .card {{ background: #fff; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.06); overflow: hidden; display: flex; flex-wrap: wrap; }}
 .card-img {{ flex: 1 1 320px; background: #f1f3f5; display: flex; align-items: center; justify-content: center; min-height: 300px; }}
 .card-img img {{ width: 100%; height: 100%; object-fit: cover; max-height: 420px; }}
 .card-body {{ flex: 1 1 320px; padding: 26px; display: flex; flex-direction: column; gap: 14px; }}
 h1 {{ font-size: 24px; color: #111; line-height: 1.5; }}
 .desc {{ color: #444; line-height: 1.9; font-size: 15px; }}
-.price {{ font-size: 26px; font-weight: 800; color: #004d7a; }}
+.price {{ font-size: 26px; font-weight: 800; color: #ed2e33; }}
 .price small {{ font-size: 15px; font-weight: 600; }}
 .badges {{ display: flex; gap: 8px; flex-wrap: wrap; }}
 .badge {{ background: #e8f4ea; color: #1e7e34; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 20px; }}
-.badge.blue {{ background: #e7f1f8; color: #004d7a; }}
+.badge.blue {{ background: #e7f1f8; color: #ed2e33; }}
 .buy-row {{ display: flex; gap: 10px; margin-top: auto; flex-wrap: wrap; }}
 .btn {{ border: none; cursor: pointer; border-radius: 12px; font-size: 16px; font-weight: 800; padding: 14px 22px; flex: 1; min-width: 140px; text-align: center; }}
-.btn-add {{ background: #004d7a; color: #fff; }}
-.btn-cart {{ background: #fff; color: #004d7a; border: 2px solid #004d7a; }}
+.btn-add {{ background: #ed2e33; color: #fff; }}
+.btn-cart {{ background: #fff; color: #ed2e33; border: 2px solid #ed2e33; }}
 .section {{ background: #fff; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.06); padding: 22px 26px; margin-top: 18px; }}
-.section h2 {{ font-size: 18px; color: #004d7a; margin-bottom: 12px; }}
+.section h2 {{ font-size: 18px; color: #ed2e33; margin-bottom: 12px; }}
 .section p, .section li {{ color: #444; line-height: 2; font-size: 14.5px; }}
 .faq details {{ border-bottom: 1px solid #eee; padding: 10px 0; }}
 .faq summary {{ cursor: pointer; font-weight: 700; font-size: 15px; color: #222; }}
@@ -389,7 +389,7 @@ h1 {{ font-size: 24px; color: #111; line-height: 1.5; }}
 .rel-card img {{ width: 100%; height: 110px; object-fit: cover; }}
 .rel-card .rel-body {{ padding: 10px; }}
 .rel-card .rel-name {{ font-size: 13.5px; font-weight: 700; color: #222; line-height: 1.5; }}
-.rel-card .rel-price {{ font-size: 13px; font-weight: 800; color: #004d7a; margin-top: 4px; }}
+.rel-card .rel-price {{ font-size: 13px; font-weight: 800; color: #ed2e33; margin-top: 4px; }}
 .footer {{ text-align: center; color: #999; font-size: 13px; padding: 26px 15px; }}
 .toast {{ position: fixed; bottom: 22px; right: 50%; transform: translateX(50%) translateY(80px); background: #1e7e34; color: #fff; padding: 12px 26px; border-radius: 12px; font-weight: 700; opacity: 0; transition: all .3s; z-index: 999; }}
 .toast.show {{ opacity: 1; transform: translateX(50%) translateY(0); }}
@@ -398,7 +398,7 @@ h1 {{ font-size: 24px; color: #111; line-height: 1.5; }}
 <body>
 <header class="header">
   <div class="header-inner">
-    <a class="logo" href="/"><img src="/assets/images/nfc2.png" alt="{site_name}"></a>
+    <a class="logo" href="/"><img src="/assets/images/cihan-logo.png" alt="{site_name}"></a>
     <a class="cart-link" href="/cartepage.html">🛒 سلة الطلبات</a>
   </div>
 </header>
@@ -452,7 +452,7 @@ h1 {{ font-size: 24px; color: #111; line-height: 1.5; }}
   </section>
 </main>
 <footer class="footer">{site_name} — توصيل المنتجات الطازجة في الكويت 🇰🇼<br>
-<a href="/prices" style="color:#004d7a">أسعار منتجاتنا اليوم</a> · <a href="/terms.html" style="color:#004d7a">الشروط والأحكام</a> · <a href="/privacy.html" style="color:#004d7a">سياسة الخصوصية</a> · <a href="/returns.html" style="color:#004d7a">سياسة الاسترجاع</a></footer>
+<a href="/prices" style="color:#ed2e33">أسعار منتجاتنا اليوم</a> · <a href="/terms.html" style="color:#ed2e33">الشروط والأحكام</a> · <a href="/privacy.html" style="color:#ed2e33">سياسة الخصوصية</a> · <a href="/returns.html" style="color:#ed2e33">سياسة الاسترجاع</a></footer>
 <div class="toast" id="toast">✅ تمت الإضافة إلى السلة</div>
 <script>
 var PRODUCT = {product_js};
@@ -492,7 +492,7 @@ _NOT_FOUND = """<!DOCTYPE html>
 <meta name="robots" content="noindex, follow">
 <style>body{{font-family:system-ui;background:#f8f9fa;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}}
 .box{{background:#fff;border-radius:16px;padding:40px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.08)}}
-a{{display:inline-block;margin-top:16px;background:#004d7a;color:#fff;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700}}</style>
+a{{display:inline-block;margin-top:16px;background:#ed2e33;color:#fff;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700}}</style>
 </head><body><div class="box"><h1>😕 هذا المنتج لم يعد متوفراً</h1>
 <p style="margin-top:10px;color:#555">ربما انتهى العرض أو تغيّر الرابط — تصفح منتجاتنا الطازجة الحالية</p>
 <a href="/">تصفح كل المنتجات</a></div></body></html>
@@ -562,7 +562,7 @@ def render_product_html(product, all_products):
         % (product_url(p), escape(product_img_url(p) if p.get('img') else '/assets/images/nfc2.png'),
            escape(str(p.get('name', ''))), escape(str(p.get('name', ''))), fmt_price(p.get('price', '0')))
         for p in related
-    ) or '<p>تصفح بقية منتجاتنا من <a href="/" style="color:#004d7a">الصفحة الرئيسية</a>.</p>'
+    ) or '<p>تصفح بقية منتجاتنا من <a href="/" style="color:#ed2e33">الصفحة الرئيسية</a>.</p>'
 
     product_js = json.dumps({
         'name': name, 'desc': desc, 'price': str(product.get('price', '0')),
@@ -655,7 +655,7 @@ _PRICES_PAGE = """<!DOCTYPE html>
 <meta property="og:description" content="أسعار يومية محدّثة لمنتجات المزرعة الطازجة في الكويت مع توصيل مجاني.">
 <meta property="og:url" content="{base}/prices">
 <meta property="og:image" content="{base}/assets/images/og-share.png">
-<meta name="theme-color" content="#004d7a">
+<meta name="theme-color" content="#ed2e33">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <script type="application/ld+json">{itemlist_schema}</script>
 <style>
@@ -665,9 +665,9 @@ a {{ text-decoration: none; color: inherit; }}
 .header {{ background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,.07); }}
 .header-inner {{ max-width: 1000px; margin: 0 auto; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }}
 .logo img {{ width: 110px; height: 35px; object-fit: contain; display: block; }}
-.cart-link {{ background: #004d7a; color: #fff; padding: 8px 18px; border-radius: 10px; font-size: 14px; font-weight: 700; }}
+.cart-link {{ background: #ed2e33; color: #fff; padding: 8px 18px; border-radius: 10px; font-size: 14px; font-weight: 700; }}
 .wrap {{ max-width: 1000px; margin: 0 auto; padding: 15px; }}
-.hero {{ background: linear-gradient(135deg, #004d7a, #006ba6); color: #fff; border-radius: 16px; padding: 26px; text-align: center; margin-bottom: 18px; }}
+.hero {{ background: linear-gradient(135deg, #ed2e33, #c81f24); color: #fff; border-radius: 16px; padding: 26px; text-align: center; margin-bottom: 18px; }}
 .hero h1 {{ font-size: 23px; margin-bottom: 8px; }}
 .hero p {{ opacity: .92; font-size: 14.5px; line-height: 1.9; }}
 .date-pill {{ display: inline-block; background: rgba(255,255,255,.18); padding: 5px 16px; border-radius: 20px; font-size: 13.5px; font-weight: 700; margin-top: 10px; }}
@@ -678,10 +678,10 @@ a {{ text-decoration: none; color: inherit; }}
 .pbody {{ padding: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }}
 .pname {{ font-weight: 700; font-size: 15px; line-height: 1.5; }}
 .pdesc {{ font-size: 13px; color: #666; line-height: 1.7; }}
-.pprice {{ font-size: 20px; font-weight: 800; color: #004d7a; margin-top: auto; }}
+.pprice {{ font-size: 20px; font-weight: 800; color: #ed2e33; margin-top: auto; }}
 .pprice small {{ font-size: 12px; color: #1e7e34; font-weight: 700; display: block; }}
 .note {{ background: #fff; border-radius: 14px; padding: 20px 24px; margin-top: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.05); }}
-.note h2 {{ color: #004d7a; font-size: 17px; margin-bottom: 10px; }}
+.note h2 {{ color: #ed2e33; font-size: 17px; margin-bottom: 10px; }}
 .note p {{ font-size: 14px; color: #444; line-height: 2; }}
 .footer {{ text-align: center; color: #999; font-size: 13px; padding: 26px 15px; }}
 </style>
@@ -689,7 +689,7 @@ a {{ text-decoration: none; color: inherit; }}
 <body>
 <header class="header">
   <div class="header-inner">
-    <a class="logo" href="/"><img src="/assets/images/nfc2.png" alt="{site_name}"></a>
+    <a class="logo" href="/"><img src="/assets/images/cihan-logo.png" alt="{site_name}"></a>
     <a class="cart-link" href="/cartepage.html">🛒 سلة الطلبات</a>
   </div>
 </header>
@@ -706,7 +706,7 @@ a {{ text-decoration: none; color: inherit; }}
   </section>
 </main>
 <footer class="footer">{site_name} — أسعار طازجة يومياً في الكويت 🇰🇼<br>
-<a href="/" style="color:#004d7a">الرئيسية</a> · <a href="/terms.html" style="color:#004d7a">الشروط والأحكام</a> · <a href="/privacy.html" style="color:#004d7a">سياسة الخصوصية</a></footer>
+<a href="/" style="color:#ed2e33">الرئيسية</a> · <a href="/terms.html" style="color:#ed2e33">الشروط والأحكام</a> · <a href="/privacy.html" style="color:#ed2e33">سياسة الخصوصية</a></footer>
 </body>
 </html>
 """

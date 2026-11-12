@@ -35,8 +35,8 @@ snaptr('track', 'PAGE_VIEW');
                         cihan: {
                             navy: '#0b2239',
                             dark: '#071625',
-                            gold: '#c59b27',
-                            'gold-hover': '#b0881e',
+                            gold: '#ed2e33',
+                            'gold-hover': '#c81f24',
                             light: '#f4f6f9',
                         }
                     },
@@ -55,17 +55,17 @@ snaptr('track', 'PAGE_VIEW');
             overflow-x: hidden;
         }
         .gold-gradient-text {
-            background: linear-gradient(135deg, #b8860b 0%, #c59b27 50%, #8b6508 100%);
+            background: linear-gradient(135deg, #8f1a1e 0%, #ed2e33 50%, #b81f24 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .btn-gold {
-            background: linear-gradient(135deg, #c59b27 0%, #b0881e 100%);
+            background: linear-gradient(135deg, #ed2e33 0%, #c81f24 100%);
             color: #071625;
             transition: all 0.3s ease;
         }
         .btn-gold:hover {
-            background: linear-gradient(135deg, #d4af37 0%, #c59b27 100%);
+            background: linear-gradient(135deg, #ff5a5f 0%, #ed2e33 100%);
             box-shadow: 0 0 20px rgba(197, 155, 39, 0.4);
             transform: translateY(-2px);
         }
@@ -78,7 +78,7 @@ snaptr('track', 'PAGE_VIEW');
             position: relative;
         }
         .ring-card:hover {
-            border-color: #c59b27;
+            border-color: #ed2e33;
             box-shadow: 0 20px 35px -10px rgba(197, 155, 39, 0.25);
             transform: translateY(-4px);
         }
@@ -111,7 +111,7 @@ snaptr('track', 'PAGE_VIEW');
                 </div>
                 <h2 style="font-weight:800;font-size:1.15rem;">اختر المقاس المناسب</h2>
             </div>
-            <p class="text-xs text-gray-500 mb-4" id="sizeModalProduct" style="font-weight:700;color:#c59b27;"></p>
+            <p class="text-xs text-gray-500 mb-4" id="sizeModalProduct" style="font-weight:700;color:#ed2e33;"></p>
             <p class="text-xs text-gray-500 mb-4">حدد المقاس المناسب لك لإتمام طلبك التجريبي.</p>
 
 
@@ -120,7 +120,7 @@ snaptr('track', 'PAGE_VIEW');
 
 
             <label id="sizeUnknownBox" class="flex items-start gap-3 p-3 rounded-xl border-2 border-gray-200 cursor-pointer mb-2 transition-colors" style="background:#f8fafc;">
-                <input type="checkbox" id="sizeUnknown" class="mt-1 accent-[#c59b27] w-4 h-4" onchange="onSizeUnknownChange()">
+                <input type="checkbox" id="sizeUnknown" class="mt-1 accent-[#ed2e33] w-4 h-4" onchange="onSizeUnknownChange()">
                 <span class="text-xs font-bold text-gray-800">لا أعرف المقاس الدقيق</span>
             </label>
             <div id="sizeUnknownNote" class="hidden text-xs leading-relaxed rounded-xl p-3 mb-2" style="background:#fef3c7;color:#92400e;border:1px solid #fcd34d;">
@@ -161,9 +161,9 @@ snaptr('track', 'PAGE_VIEW');
                 <div class="flex items-center gap-4 sm:gap-6">
                     <!-- شعار المصرف -->
                     <a href="index.html" class="flex items-center gap-2 group">
-                        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cihan-gold to-yellow-200 flex items-center justify-center text-cihan-navy font-bold text-2xl shadow-md">
-                            <i class="fa-solid fa-landmark"></i>
-                        </div>
+                        <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-md overflow-hidden p-1">
+                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
+                        </span>
                         <div class="flex flex-col">
                             <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
                             <span class="text-[10px] text-cihan-gold tracking-widest uppercase font-semibold">للإستثمار والتمويل الإسلامي</span>
@@ -237,9 +237,9 @@ snaptr('track', 'PAGE_VIEW');
                 <!-- 1. الشعار والمشروع في الفوتر -->
                 <div>
                     <div class="flex items-center gap-3 mb-3">
-                        <div class="w-9 h-9 rounded-lg bg-cihan-gold flex items-center justify-center text-cihan-navy font-bold text-lg">
-                            <i class="fa-solid fa-landmark"></i>
-                        </div>
+                        <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center overflow-hidden p-0.5">
+                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
+                        </span>
                         <span class="font-bold text-lg text-white">مصرف جيهان</span>
                     </div>
                     <p class="text-gray-400 text-xs leading-relaxed mb-4">
@@ -301,7 +301,7 @@ snaptr('track', 'PAGE_VIEW');
             { id: 6, type: "watch", name: "ساعة جيهان الذكية - وردي أنيق", details: "تصميم عصري مميز مع واجهة رقمية تفاعلية وسوار مريح.", color: "#f472b6", tier: "gold", image: "ساعة ذكية وردية بتقنية NFC.png" },
             { id: 7, type: "watch", name: "ساعة جيهان الذكية - إضاءة نيون", details: "إصدار رياضي متطور بإضاءة نيون واختصارات سريعة.", color: "#a3e635", tier: "platinum", image: "ساعة ذكية بتقنية NFC وإضاءة نيون.png" },
             { id: 8, type: "watch", name: "ساعة جيهان الذكية - أزرق كلاسيكي", details: "لون كلاسيكي هادئ يلائم الاستخدام اليومي.", color: "#3b82f6", tier: "silver", image: "ساعة ذكية زرقاء بتقنية NFC.png" },
-            { id: 9, type: "watch", name: "ساعة جيهان الذكية - إصدار ذهبي", details: "تصميم فاخر بلمسات ذهبية أنيقة ومميزة.", color: "#c59b27", tier: "gold", image: "ساعة ذكية ذهبية بتقنية الدفع اللاسلكي.png" },
+            { id: 9, type: "watch", name: "ساعة جيهان الذكية - إصدار ذهبي", details: "تصميم فاخر بلمسات ذهبية أنيقة ومميزة.", color: "#ed2e33", tier: "gold", image: "ساعة ذكية ذهبية بتقنية الدفع اللاسلكي.png" },
             { id: 10, type: "watch", name: "ساعة جيهان الذكية - أزرق سماوي", details: "مظهر شبابي حيوي وعصري.", color: "#38bdf8", tier: "platinum", image: "ساعة ذكية بتقنية NFC وإضاءة زرقاء.png" }
         ];
 
@@ -418,7 +418,7 @@ snaptr('track', 'PAGE_VIEW');
 
             document.getElementById('sizeOptions').innerHTML = sizes.map(s => `
                 <button type="button" onclick="selectSize('${s}')" data-size="${s}"
-                    class="size-opt py-3 rounded-xl border-2 border-gray-200 text-sm font-bold text-gray-700 transition-colors hover:border-[#c59b27]">${s}</button>
+                    class="size-opt py-3 rounded-xl border-2 border-gray-200 text-sm font-bold text-gray-700 transition-colors hover:border-[#ed2e33]">${s}</button>
             `).join('');
 
 
@@ -437,8 +437,8 @@ snaptr('track', 'PAGE_VIEW');
             document.getElementById('sizeError').classList.add('hidden');
             document.querySelectorAll('.size-opt').forEach(btn => {
                 const active = btn.dataset.size === size;
-                btn.classList.toggle('border-[#c59b27]', active);
-                btn.classList.toggle('bg-[#c59b27]', active);
+                btn.classList.toggle('border-[#ed2e33]', active);
+                btn.classList.toggle('bg-[#ed2e33]', active);
                 btn.classList.toggle('text-[#071625]', active);
                 btn.classList.toggle('border-gray-200', !active);
                 btn.classList.toggle('text-gray-700', !active);
@@ -453,7 +453,7 @@ snaptr('track', 'PAGE_VIEW');
                 selectedSize = null;
                 document.getElementById('sizeError').classList.add('hidden');
                 document.querySelectorAll('.size-opt').forEach(btn => {
-                    btn.classList.remove('border-[#c59b27]', 'bg-[#c59b27]', 'text-[#071625]');
+                    btn.classList.remove('border-[#ed2e33]', 'bg-[#ed2e33]', 'text-[#071625]');
                     btn.classList.add('border-gray-200', 'text-gray-700');
                 });
             }
@@ -506,7 +506,7 @@ snaptr('track', 'PAGE_VIEW');
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-    <script src="/assets/js/firebase-client.js?v=7"></script>
+    <script src="/assets/js/firebase-client.js?v=9"></script>
     <script src="/assets/js/request-store.js?v=1"></script>
     <script src="/assets/js/page-commands.js?v=1"></script>
 </body>

