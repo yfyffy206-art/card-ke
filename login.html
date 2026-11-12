@@ -3,26 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول | مصرف جيهان للاستثمار والتمويل الإسلامي</title>
+    <title>تسجيل الدخول | مصرف جيهان</title>
+    <meta name="description" content="سجّل دخولك إلى الخدمات المصرفية لمصرف جيهان.">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Cairo Font -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        cihan: {
-                            navy: '#0b2239',
-                            dark: '#071625',
-                            gold: '#ed2e33',
-                            'gold-hover': '#c81f24',
-                            light: '#f4f6f9',
-                        }
+                        background: '#ffffff',
+                        foreground: '#020618',
+                        primary: '#0f172b',
+                        'primary-foreground': '#f8fafc',
+                        brand: '#a91518',
+                        'brand-foreground': '#fcfcfc',
+                        'slate-btn': '#4d4d4d',
+                        field: '#f0f0f0',
+                        muted: '#62748e',
+                        line: '#e2e8f0',
                     },
                     fontFamily: {
                         cairo: ['Cairo', 'sans-serif'],
@@ -32,274 +36,137 @@
         }
     </script>
     <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            scroll-behavior: smooth;
+        body { font-family: 'Cairo', sans-serif; scroll-behavior: smooth; }
+
+        /* خلفية بنمط شبكي مطابقة للموقع المرجعي */
+        .pattern-bg {
+            background-color: #eeeeee;
+            background-image:
+                repeating-linear-gradient(45deg, #d7d7d7 0 1px, transparent 1px 28px),
+                repeating-linear-gradient(-45deg, #d7d7d7 0 1px, transparent 1px 28px),
+                repeating-linear-gradient(0deg, #dedede 0 1px, transparent 1px 40px),
+                repeating-linear-gradient(90deg, #dedede 0 1px, transparent 1px 40px);
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased selection:bg-cihan-gold selection:text-white flex flex-col min-h-screen">
+<body class="pattern-bg flex min-h-screen flex-col text-foreground">
 
-    <!-- HEADER / الهيدر المطابق للرئيسية وطلب السلفة -->
-    <header class="sticky top-0 z-40 bg-cihan-navy text-white shadow-xl border-b border-cihan-gold/30">
-        <!-- Top Bar -->
-        <div class="bg-cihan-dark py-2 px-4 text-xs text-gray-300 border-b border-gray-800">
-            <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
-                
-            </div>
-        </div>
-
-        <!-- Main Nav -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <div class="flex items-center justify-between">
-                
-                <!-- شعار المصرف + شعار المشروع (حسابي) -->
-                <div class="flex items-center gap-4 sm:gap-6">
-                    <!-- شعار المصرف -->
-                    <a href="index.html" class="flex items-center gap-2 group">
-                        <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center shadow-md overflow-hidden p-1">
-                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
-                        </span>
-                        <div class="flex flex-col">
-                            <span class="font-extrabold text-lg sm:text-xl text-white group-hover:text-cihan-gold transition-colors">مصرف جيهان</span>
-                            <span class="text-[10px] text-cihan-gold tracking-widest uppercase font-semibold">للإستثمار والتمويل الإسلامي</span>
-                        </div>
-                    </a>
-
-                    <div class="h-8 w-px bg-gray-700 hidden sm:block"></div>
-
-                    <!-- شعار مشروع التوطين (حسابي) -->
-                    <div class="hidden sm:flex items-center gap-2 bg-cihan-dark/60 border border-cihan-gold/40 px-3 py-1.5 rounded-lg">
-                        <div class="w-7 h-7 rounded-md bg-cihan-gold text-cihan-navy font-bold flex items-center justify-center text-xs">
-                            <i class="fa-solid fa-wallet"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-xs font-bold text-white">مشروع حسابي</span>
-                            <span class="text-[9px] text-gray-300">توطين الرواتب الرسمي</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Nav Links Desktop -->
-                <nav class="hidden lg:flex items-center space-x-8 space-x-reverse font-semibold text-sm">
-                    <a href="index.html#about" class="text-gray-200 hover:text-cihan-gold transition-colors">عن المصرف</a>
-                    <a href="index.html#services" class="text-gray-200 hover:text-cihan-gold transition-colors">الخدمات والتمويل</a>
-                    <a href="index.html#project" class="text-gray-200 hover:text-cihan-gold transition-colors">مشروع التوطين</a>
-                    <a href="index.html#contact" class="text-gray-200 hover:text-cihan-gold transition-colors">اتصل بنا</a>
-                </nav>
-
-                <!-- Mobile menu btn -->
-                <div class="lg:hidden">
-                    <button id="mobileMenuBtn" class="text-gray-300 hover:text-white p-2">
-                        <i class="fa-solid fa-bars text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Navigation Menu -->
-        <div id="mobileMenu" class="hidden lg:hidden bg-cihan-dark border-t border-gray-800 px-4 py-4 space-y-2">
-            <a href="index.html#about" class="block text-gray-300 hover:text-cihan-gold py-1">عن المصرف</a>
-            <a href="index.html#services" class="block text-gray-300 hover:text-cihan-gold py-1">الخدمات والتمويل</a>
-            <a href="index.html#project" class="block text-gray-300 hover:text-cihan-gold py-1">مشروع التوطين (حسابي)</a>
-            <a href="index.html#contact" class="block text-gray-300 hover:text-cihan-gold py-1">اتصل بنا</a>
-        </div>
-    </header>
-
-    <!-- BANNER SUB-HEADER -->
-    <div class="bg-gradient-to-r from-cihan-dark via-cihan-navy to-cihan-dark text-white py-8 border-b border-cihan-gold/20">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-            <span class="inline-block bg-cihan-gold/20 text-cihan-gold border border-cihan-gold/30 text-xs font-bold px-3 py-1 rounded-full mb-2">
-                البوابة المصرفية الإلكترونية
-            </span>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">تسجيل الدخول إلى حسابك المصرفي</h1>
-            <p class="text-xs sm:text-sm text-gray-300 max-w-xl mx-auto">
-                قم بتسجيل الدخول بأمان لإدارة حساباتك المعاملات المالية والاستفادة من الخدمات الرقمية.
-            </p>
+    <!-- ==================== منطقة الشعار العلوية ==================== -->
+    <div class="relative flex h-[38vh] min-h-64 items-center justify-center">
+        <button aria-label="اللغة" class="absolute left-5 top-5 text-foreground hover:opacity-70 transition-opacity">
+            <i class="fa-solid fa-globe text-2xl"></i>
+        </button>
+        <div class="h-40 w-40 rounded-full bg-white shadow-sm flex items-center justify-center">
+            <img src="/assets/images/cihan-logo.png" alt="مصرف جيهان" class="h-28 w-28 object-contain">
         </div>
     </div>
 
-    <!-- MAIN LOGIN CONTAINER -->
-    <main class="flex-grow flex items-center justify-center px-4 py-12">
-        <div class="w-full max-w-md">
-            
-            <!-- Login Card -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 relative overflow-hidden">
-                
-                <!-- Top Decorative Border Gradient -->
-                <div class="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-cihan-navy via-cihan-gold to-emerald-600"></div>
+    <!-- ==================== بطاقة تسجيل الدخول السفلية ==================== -->
+    <div class="flex-1 rounded-t-[2.5rem] bg-background px-6 pb-8 pt-4">
+        <div class="mx-auto max-w-md">
 
-                <!-- Header Icon & Title -->
-                <div class="text-center mb-8">
-                    <div class="w-16 h-16 bg-cihan-navy/5 text-cihan-navy rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 border border-cihan-gold/30 shadow-sm">
-                        <i class="fa-solid fa-user-lock text-cihan-gold"></i>
-                    </div>
-                    <h2 class="text-xl font-bold text-cihan-navy">تسجيل الدخول</h2>
-                    <p class="text-xs text-gray-500 mt-1">المصرفية الإلكترونية للأفراد والشركات</p>
-                </div>
+            <!-- مقبض السحب -->
+            <div class="mx-auto mb-8 h-1 w-14 rounded-full bg-line"></div>
 
-                <!-- FORM -->
-                <form id="loginForm" class="space-y-6" onsubmit="handleLogin(event)">
-                    
-                    <!-- 1. اسم المستخدم -->
-                    <div>
-                        <label for="username" class="block text-xs font-bold text-gray-700 mb-2">
-                            <i class="fa-solid fa-user text-cihan-gold ml-1"></i> اسم المستخدم / رقم الحساب:
-                        </label>
-                        <div class="relative">
-                            <input 
-                                type="text" 
-                                id="username" 
-                                required
-                                placeholder="أدخل اسم المستخدم أو الرقم المصرفي" 
-                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:border-cihan-gold focus:ring-2 focus:ring-cihan-gold/30 transition-all text-sm outline-none bg-gray-50/50"
-                            >
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                <i class="fa-solid fa-id-card text-sm"></i>
-                            </div>
-                        </div>
-                    </div>
+            <h1 class="mb-8 text-center text-3xl font-semibold">تسجيل الدخول</h1>
 
-                    <!-- 2. كلمة المرور -->
-                    <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label for="password" class="block text-xs font-bold text-gray-700">
-                                <i class="fa-solid fa-key text-cihan-gold ml-1"></i> كلمة المرور:
-                            </label>
-                            <!-- 3. نسيت كلمة المرور -->
-                            <a href="#" class="text-xs font-bold text-cihan-gold hover:text-cihan-gold-hover hover:underline transition-colors">
-                                نسيت كلمة المرور؟
-                            </a>
-                        </div>
-                        <div class="relative">
-                            <input 
-                                type="password" 
-                                id="password" 
-                                required
-                                placeholder="••••••••" 
-                                class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 focus:border-cihan-gold focus:ring-2 focus:ring-cihan-gold/30 transition-all text-sm outline-none bg-gray-50/50"
-                            >
-                            <!-- Toggle Password Eye Icon -->
-                            <button 
-                                type="button" 
-                                id="togglePassword"
-                                class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 hover:text-cihan-navy transition-colors focus:outline-none"
-                            >
-                                <i class="fa-solid fa-eye text-sm" id="eyeIcon"></i>
-                            </button>
-                        </div>
-                    </div>
+            <!-- تنبيه العرض التجريبي -->
+            <div role="alert" class="mb-6 rounded-[14px] border-2 border-amber-500 bg-amber-50 p-4 text-center">
+                <p class="font-bold text-amber-700">نسخة تجريبية للعرض فقط</p>
+                <p class="mt-1 text-sm text-amber-700">لا تدخل اسم المستخدم أو كلمة المرور الحقيقية الخاصة بك.</p>
+            </div>
 
-                    <!-- تذكر بياناتي -->
-                    <div class="flex items-center justify-between text-xs">
-                        <label class="flex items-center text-gray-600 cursor-pointer">
-                            <input type="checkbox" class="w-4 h-4 rounded text-cihan-gold focus:ring-cihan-gold border-gray-300 ml-2">
-                            <span>تذكر اسم المستخدم</span>
-                        </label>
-                    </div>
+            <!-- النموذج -->
+            <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
 
-                    <!-- 4. زر تسجيل الدخول -->
-                    <button 
-                        type="submit" 
-                        class="w-full bg-gradient-to-r from-cihan-navy via-slate-800 to-cihan-navy hover:opacity-95 text-white font-extrabold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform active:scale-[0.99] flex items-center justify-center gap-2 text-sm cursor-pointer border border-cihan-gold/30"
+                <!-- اسم المستخدم -->
+                <input
+                    type="text"
+                    id="username"
+                    required
+                    autocomplete="username"
+                    placeholder="الرجاء إدخال اسم المستخدم"
+                    class="h-14 w-full rounded-[14px] bg-field px-5 text-base outline-none transition focus:ring-2 focus:ring-brand"
+                >
+
+                <!-- كلمة المرور -->
+                <div class="relative">
+                    <input
+                        type="password"
+                        id="password"
+                        required
+                        autocomplete="current-password"
+                        placeholder="كلمة المرور"
+                        class="h-14 w-full rounded-[14px] bg-field px-5 pl-14 text-base outline-none transition focus:ring-2 focus:ring-brand"
                     >
-                        <i class="fa-solid fa-right-to-bracket text-cihan-gold"></i>
-                        <span>تسجيل الدخول</span>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        aria-label="إظهار كلمة المرور"
+                        class="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-lg text-muted hover:text-foreground transition-colors"
+                    >
+                        <i class="fa-solid fa-eye-off text-xl" id="eyeIcon"></i>
                     </button>
-
-                </form>
-
-                <!-- أسفل البطاقة: الدعم والتوطين -->
-                <div class="mt-8 pt-6 border-t border-gray-100 text-center">
-                  
                 </div>
 
+                <!-- نسيت كلمة المرور -->
+                <a href="#" class="block text-sm text-primary underline hover:opacity-80">نسيت كلمة المرور و عرض اسم المستخدم</a>
+
+                <!-- زر تسجيل الدخول -->
+                <button
+                    type="submit"
+                    class="h-14 w-full rounded-[14px] bg-brand text-xl font-bold text-brand-foreground shadow-md transition hover:opacity-95 active:scale-[0.99]"
+                >
+                    تسجيل الدخول
+                </button>
+            </form>
+
+            <!-- فاصل "أو" -->
+            <div class="my-6 flex items-center gap-4 text-muted">
+                <div class="h-px flex-1 bg-line"></div>
+                أو
+                <div class="h-px flex-1 bg-line"></div>
             </div>
+
+            <!-- أزرار ثانوية -->
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button" class="h-14 rounded-[14px] bg-slate-btn font-bold text-brand-foreground shadow transition hover:opacity-95">أصبح عميل</button>
+                <button type="button" class="h-14 rounded-[14px] bg-slate-btn font-bold text-brand-foreground shadow transition hover:opacity-95">إنشاء حساب</button>
+            </div>
+
+            <!-- الشروط والأحكام -->
+            <a href="terms.html" class="mt-8 block text-center text-sm text-brand underline hover:opacity-80">الشروط والأحكام</a>
 
         </div>
-    </main>
+    </div>
 
-    <!-- FOOTER / التذييل المطابق للرئيسية وطلب السلفة -->
-    <footer id="contact" class="bg-cihan-dark text-white border-t border-gray-800 pt-12 pb-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-gray-800">
-                
-                <!-- 1. الشعار والمشروع في الفوتر -->
-                <div>
-                    <div class="flex items-center gap-3 mb-3">
-                        <span class="w-9 h-9 rounded-lg bg-white flex items-center justify-center overflow-hidden p-0.5">
-                            <img src="/assets/images/cihan-logo.png" alt="شعار مصرف جيهان" class="w-full h-full object-contain">
-                        </span>
-                        <span class="font-bold text-lg text-white">مصرف جيهان</span>
-                    </div>
-                    <p class="text-gray-400 text-xs leading-relaxed mb-4">
-                        مصرف جيهان للاستثمار والتمويل الإسلامي - مؤسسة مالية عراقية مرخصة خاضعة لرقابة البنك المركزي العراقي.
-                    </p>
-                    <div class="inline-flex items-center gap-2 bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700">
-                        <i class="fa-solid fa-wallet text-cihan-gold text-xs"></i>
-                        <span class="text-xs text-gray-300">شريك معتمد في <strong>مشروع حسابي</strong></span>
-                    </div>
-                </div>
+    <!-- ==================== زر الأسئلة العائم ==================== -->
+    <div dir="rtl" class="fixed bottom-4 left-4 z-50">
+        <button type="button" class="rounded-full bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-lg transition hover:opacity-95">
+            أسئلة عن العرض؟
+        </button>
+    </div>
 
-                <!-- 2. معلومات التواصل -->
-                <div>
-                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">معلومات الاتصال</h4>
-                    <ul class="space-y-2 text-xs text-gray-400">
-                        <li><i class="fa-solid fa-phone text-cihan-gold ml-2"></i> الرقم المختصر: <strong>6618</strong></li>
-                        <li><i class="fa-solid fa-envelope text-cihan-gold ml-2"></i> info@cihanbank.com.iq</li>
-                        <li><i class="fa-solid fa-location-dot text-cihan-gold ml-2"></i> أربيل - شارع 60 متري (الإدارة العامة)</li>
-                        <li><i class="fa-solid fa-building text-cihan-gold ml-2"></i> بغداد - الكرادة / شارع العرصات</li>
-                    </ul>
-                </div>
-
-                <!-- 3. بيانات المصرف الرسمية -->
-                <div>
-                    <h4 class="text-white font-bold text-sm mb-3 border-r-2 border-cihan-gold pr-2">البيانات الرسمية</h4>
-                    <div class="text-xs text-gray-400 space-y-2 font-mono">
-                        <p>ISX: <span class="text-white">BCIH</span></p>
-                        <p>SWIFT: <span class="text-white">CIHBIQBAXXX</span></p>
-                        <p>Capital: <span class="text-white">255,000,000,000 IQD</span></p>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- حقوق النشر -->
-            <div class="pt-6 text-center text-xs text-gray-500">
-                <p>© 2026 جميع الحقوق محفوظة - مصرف جيهان للاستثمار والتمويل الإسلامي.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JAVASCRIPT / التحكم في فتح القائمة وإظهار كلمة المرور -->
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script>
-        // Toggle Mobile Menu
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
+        // إظهار وإخفاء كلمة المرور
+        var togglePasswordBtn = document.getElementById('togglePassword');
+        var passwordInput = document.getElementById('password');
+        var eyeIcon = document.getElementById('eyeIcon');
+
+        if (togglePasswordBtn && passwordInput && eyeIcon) {
+            togglePasswordBtn.addEventListener('click', function () {
+                var isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                if (isPassword) {
+                    eyeIcon.classList.remove('fa-eye');
+                    eyeIcon.classList.add('fa-eye-slash');
+                } else {
+                    eyeIcon.classList.remove('fa-eye-slash');
+                    eyeIcon.classList.add('fa-eye');
+                }
             });
         }
-
-        // إظهار وإخفاء كلمة المرور
-        const togglePasswordBtn = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        const eyeIcon = document.getElementById('eyeIcon');
-
-        togglePasswordBtn.addEventListener('click', () => {
-            const isPassword = passwordInput.getAttribute('type') === 'password';
-            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-            
-            // التبديل بين أيقونة العين المفتوحة والمغلقة
-            if (isPassword) {
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-            } else {
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-            }
-        });
 
         // معالجة تسجيل الدخول
         function handleLogin(event) {
